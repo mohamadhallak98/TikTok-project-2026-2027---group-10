@@ -2,16 +2,16 @@
 title: "File download"
 format: html
 ---
-# Bestand om file te downloaden
+# File to download data
 
 ## Download link
 ```{r}
-# Maak de map aan als deze niet bestaat
+# Creates the map if it does not exist
 if (!dir.exists("data/raw")) {
   dir.create("data/raw", recursive = TRUE)
 }
 
-# Download het bestand als deze nog niet bestaat
+# Creates the data file if it does not exist
 if (!file.exists("data/raw/video_view.csv")) {
 data_url <- paste0(
 "https://raw.githubusercontent.com/hannesdatta/",
