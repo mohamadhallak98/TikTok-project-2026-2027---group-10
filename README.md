@@ -12,4 +12,3 @@
 - Mohamad Hallak 
 - Jette Hulsen
 
-This repository is a template for the Data preparation and programming skills in fall 2026. 
