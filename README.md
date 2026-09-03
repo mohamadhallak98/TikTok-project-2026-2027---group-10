@@ -3,7 +3,7 @@
 ## Project goal
 This project analyzes TikTok video engagement metrics to evaluate creator performance and viewer reach trends using R and Quarto.
 
-## Project Structure
+
 ## Project Structure
 
 ```text
