@@ -4,6 +4,8 @@
 This project analyzes TikTok video engagement metrics to evaluate creator performance and viewer reach trends using R and Quarto.
 
 ## Project Structure
+## Project Structure
+
 ```text
 TikTok-project-2026-2027---group-10/
 ├── data/
@@ -12,7 +14,7 @@ TikTok-project-2026-2027---group-10/
 ├── docs/             # Project documentation and guides
 ├── src/              # All Quarto scripts (File_download.qmd, summary.qmd)
 └── README.md         # Project overview and execution guide
-
+```
 ## Environment setup & dependencies
 To run this project locally, ensure you have the following installed:
 * **R** (v4.2.0 or higher)
