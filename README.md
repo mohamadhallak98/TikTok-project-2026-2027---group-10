@@ -9,12 +9,17 @@ This project analyzes TikTok video engagement metrics to evaluate creator perfor
 ```text
 TikTok-project-2026-2027---group-10/
 ├── data/
-│   ├── raw/          # Raw, unmodified data downloads
-│   └── processed/    # Cleaned and generated data outputs
-├── docs/             # Project documentation and guides
-├── src/              # All Quarto scripts (File_download.qmd, summary.qmd)
-└── README.md         # Project overview and execution guide
+│   ├── raw/
+│   │   └── video_view.csv    # Raw dataset (downloaded locally, ignored by Git)
+│   └── processed/            # Cleaned data outputs
+├── docs/                     # Documentation and guides
+├── src/
+│   ├── File_download.qmd     # Download script
+│   └── summary.qmd           # Data summary report
+├── .gitignore                # Excludes data/ while preserving folder tracking
+└── README.md                 # Project overview and execution guide
 ```
+
 ## Environment setup & dependencies
 To run this project locally, ensure you have the following installed:
 * **R** (v4.2.0 or higher)
