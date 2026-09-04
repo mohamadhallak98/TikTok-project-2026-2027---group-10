@@ -1,0 +1,5 @@
+# Ignore all raw and processed dataset files
+data/*
+
+# Exception: keep tracking folder placeholders on GitHub
+!data/**/.gitkeep

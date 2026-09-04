@@ -21,6 +21,8 @@ To run this project locally, ensure you have the following installed:
 * **Quarto CLI**
 * **Positron** (or RStudio)
 
+> **Note on Data Privacy:** Data files stored in `data/` are excluded from version control via `.gitignore` to keep the repository lightweight and prevent pushing large datasets.
+
 ## Required R Packages
 Install the necessary package dependencies by executing this in your R Console:
 ```r
