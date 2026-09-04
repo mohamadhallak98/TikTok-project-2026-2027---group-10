@@ -3,19 +3,29 @@ title: "File download"
 format: html
 ---
 # File to download data
-
+This script downloads the required dataset from the course repository and saves it directly to the `data/raw` folder.
 ## Download link
 ```{r}
+# Detect correct path relative to working directory
+if (basename(getwd()) == "src") {
+  target_dir <- "../data/raw"
+  file_path <- "../data/raw/video_view.csv"
+} else {
+  target_dir <- "data/raw"
+  file_path <- "data/raw/video_view.csv"
+}
+
 # Creates the map if it does not exist
-if (!dir.exists("data/raw")) {
-  dir.create("data/raw", recursive = TRUE)
+if (!dir.exists(target_dir)) {
+  dir.create(target_dir, recursive = TRUE)
 }
 
 # Creates the data file if it does not exist
-if (!file.exists("data/raw/video_view.csv")) {
-data_url <- paste0(
-"https://raw.githubusercontent.com/hannesdatta/course-dprep/refs/heads/main/material/project/video_view.csv"
-)
-download.file(data_url, "data/raw/video_view.csv")
+if (!file.exists(file_path)) {
+  data_url <- "https://raw.githubusercontent.com/hannesdatta/course-dprep/refs/heads/main/material/project/video_view.csv"
+  download.file(data_url, destfile = file_path, mode = "wb")
+  message("Dataset downloaded successfully into data/raw/.")
+} else {
+  message("Dataset already exists in data/raw/. Skipping download.")
 }
 ```
