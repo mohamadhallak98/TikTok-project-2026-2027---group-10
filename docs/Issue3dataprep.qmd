@@ -1,0 +1,35 @@
+---
+title: "Summary video views"
+format: html
+---
+
+```{r}
+# Load packages
+library(readr)
+library(tidyverse)
+# Load data
+video_views <- read_csv("C:/Users/irisk/OneDrive - Tilburg University/Data prep. Programming Skills/TikTok-project-2026-2027---group-10/data/raw/video_view.csv")
+# Overall summary
+video_views %>%
+  summarise(
+    total_impressions = sum(impressions_n, na.rm = TRUE),
+    avg_watch_rate = mean(watch_rate, na.rm = TRUE),
+    n_videos = n()
+  )
+# Video summary  
+Video_summary <-video_views %>%
+group_by(video_id) %>%
+summarise(
+watched = sum(watched_n, na.rm = TRUE),
+impressions= sum(impressions_n,na.rm= TRUE),
+watch_rate_avg= mean(watch_rate, na.rm= TRUE),
+watch_share_avg = mean(avg_watch_share, na.rm = TRUE)
+) %>%
+arrange(desc(impressions))
+Video_summary
+# Top 10 most viewed videos
+video_views %>%
+   arrange(desc(watched_n)) %>%
+   select(video_id, watched_n)%>%
+    head(10)
+```
