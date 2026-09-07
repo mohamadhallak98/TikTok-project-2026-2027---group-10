@@ -1,13 +1,32 @@
 ---
-title: "TikTok Video View Summary"
+title: "TikTok video views summary"
+author: "Team 10"
 format: html
+execute:
+  warning: false
+  message: false
 ---
 
+## Overview
+
+This report provides a summary analysis of raw TikTok video views stored in `data/raw/video_view.csv`.
+
 ```{r}
-views <- read.csv("C:\Users\JeroenSwolfs\Documents\TikTok-project-template-2026\data\video_view.csv")
+# Detect correct path relative to working directory
+if (basename(getwd()) == "src") {
+  data_path <- "../data/raw/video_view.csv"
+} else {
+  data_path <- "data/raw/video_view.csv"
+}
+
+# Load needed packages
 library(dplyr)
 library(tidyverse)
 
+# Read dataset
+views <- read.csv(data_path)
+
+# Basic exploration
 x <- nrow(views)
 print(x)
 
@@ -16,34 +35,35 @@ head(views)
 summary(views)
 colSums(is.na(views))
 
+# Summary overview using exact dataset column names
 overview <- views %>%
   summarize(
-    videos = n(),
-    creators = n_distinct(creator_id),
-    avg_length = mean(video_length_sec),
-    avg_impressions = mean(impressions_n),
-    avg_watched = mean(watched_n),
-    avg_watch_rate = 
-    avg_watch_share = 
-    avg_watch_seconds = 
+    videos            = n(),
+    creators          = n_distinct(creator_id),
+    avg_length        = mean(video_length_sec, na.rm = TRUE),
+    avg_impressions   = mean(impressions_n, na.rm = TRUE),
+    avg_watched       = mean(watched_n, na.rm = TRUE),
+    avg_watch_rate    = mean(watch_rate, na.rm = TRUE),
+    avg_watch_share   = mean(avg_watch_share, na.rm = TRUE),
+    avg_watch_seconds = mean(avg_watch_seconds_when_watched, na.rm = TRUE)
   )
 
 print(overview)
 
-mean(views$watch_rate)
-mean(views$avg_watch_share)
+mean(views$watch_rate, na.rm = TRUE)
+mean(views$avg_watch_share, na.rm = TRUE)
 
+# Calculate percentage watched
 views$watched_pct <- views$watched_n / views$impressions_n * 100
 
-topvideo <- views[views$impressions_n == max(views$impressions_n), ]
+# Identify top video by impressions
+topvideo <- views[views$impressions_n == max(views$impressions_n, na.rm = TRUE), ]
 print(topvideo)
 
+# Histogram of video lengths
 hist(views$video_length_sec)
 
+# Subset high watch rate videos
 goodvideos <- subset(views, watch_rate > 0.8)
 nrow(goodvideos)
-
-# I am (Mohamad) trying to do a push 
-# I am (Iris) trying to do a push
-
 ```
