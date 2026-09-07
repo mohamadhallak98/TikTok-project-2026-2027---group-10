@@ -9,7 +9,7 @@ This document outlines the artificial intelligence (AI) tools, models, and workf
 | Team Member | AI Tool / Platform | Specific Model(s) Used | Key Purpose |
 | :--- | :--- | :--- | :--- |
 | **Mohamad** | Google Gemini | Gemini 3.6 / Flash | Code validation, cross-platform path debugging (Windows), and resolving git workflow conflicts. |
-| **Jette** | Tilburg AI | GPT-4.1 | Concept clarification, understanding script logic, and troubleshooting script runtime issues. |
+| **Jette** | Tilburg AI | GPT-4.1 | Concept clarification, understanding script logic, and troubleshooting script issues. |
 | **Iris** | Tilburg AI | GPT-4.1 | Command syntax lookup, script structure understanding, and error resolution. |
 | **Danny** | Posit Assistant & Tilburg AI | Posit AI / Mistral | Resolving R package warnings/errors, analyzing alternative code implementations, and broad concept exploration. |
 
