@@ -43,29 +43,29 @@ All scripts are written with dynamic relative pathing (basename(getwd())). They 
 
 * Clone this repository to your local workspace:
 ```PowerShell
- git clone [github.com/mohammadhallak98](https://github.com/mohamadhallak98/TikTok-project-2026-2027---group-10)
+ git clone [https://github.com/mohamadhallak98/TikTok-project-2026-2027---group-10.git](https://github.com/mohamadhallak98/TikTok-project-2026-2027---group-10.git)
 ```
 * Navigate into the project root directory:
 ```bash
 cd TikTok-project-2026-2027---group-10
 ```
 * Execute the workflow scripts inside src/ in the following order:
-    * Step 1 (data acquisition): Render or run src/file_download.qmd to fetch the raw TikTok dataset.
-    ```PowerShell
+    * Step 1 (data acquisition): Render or run src/File_download.qmd to fetch the raw TikTok dataset.
+    ```bash
     quarto render src/File_download.qmd
     ```
-        * Input: GitHub raw URL endpoint.
-        * Output: Saves video_view.csv directly into data/raw/.
-        * Behavior: Checks if the file already exists locally to avoid redundant downloads.
+      * Input: GitHub raw URL endpoint.
+      * Output: Saves video_view.csv directly into data/raw/.
+      * Behavior: Checks if the file already exists locally to avoid redundant downloads.
     * Step 2 (data analysis & reporting): Execute src/summary.qmd or render via terminal: process data and generate the output summary report.
-    ```PowerShell
+    ```bash
     quarto render src/summary.qmd
     ```
-        * Input: data/raw/video_view.csv.
-        * Output: Generates src/summary.html containing:
-            * Missing value diagnostics (colSums(is.na())).
-            * Aggregate summary metrics (total creators, avg impressions, watch rate, watch share).
-            * Video performance ranking and length distribution histograms.
+      * Input: data/raw/video_view.csv.
+      * Output: Generates src/summary.html containing:
+         * Missing value diagnostics (colSums(is.na())).
+         * Aggregate summary metrics (total creators, avg impressions, watch rate, watch share).
+         * Video performance ranking and length distribution histograms.
 * Commit and push with Git: In your Positron terminal, execute the commands you need for adding, committing and pushing.
 
 ## Pipeline architecture (setup-input-transformation-output)
@@ -82,4 +82,4 @@ Both pipeline scripts follow strict SITO principles:
 * Jette Hulsen: Concept clarification, understanding script logic, and troubleshooting script issues.
 
 ## AI tools: 
-AI tools were utilized for code validation, Windows-specific path debugging, and conceptual learning. Full model listings, workflows, and human review protocols are documented in AI.md.
+AI tools were utilized for code validation, Windows-specific path debugging, and conceptual learning. Full model listings, workflows, and human review protocols are documented in ([AI.md](./AI.md)).
