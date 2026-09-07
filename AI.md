@@ -6,7 +6,7 @@ This document outlines the artificial intelligence (AI) tools, models, and workf
 
 ## AI tools and model specifications
 
-| Team Member | AI Tool / Platform | Specific Model(s) Used | Key Purpose |
+| Team Member | AI tool / platform | Specific model(s) used | Key purpose |
 | :--- | :--- | :--- | :--- |
 | **Mohamad** | Google Gemini | Gemini 3.6 / Flash | Code validation, cross-platform path debugging (Windows), and resolving git workflow conflicts. |
 | **Jette** | Tilburg AI | GPT-4.1 | Concept clarification, understanding script logic, and troubleshooting script issues. |

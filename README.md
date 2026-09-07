@@ -43,21 +43,20 @@ All scripts are written with dynamic relative pathing (basename(getwd())). They 
 
 * Clone this repository to your local workspace:
 ```PowerShell
- git clone [https://github.com/mohamadhallak98/TikTok-project-2026-2027---group-10.git](https://github.com/mohamadhallak98/TikTok-project-2026-2027---group-10.git)
+ git clone https://github.com/mohamadhallak98/TikTok-project-2026-2027---group-10.git
 ```
 * Navigate into the project root directory:
 ```bash
 cd TikTok-project-2026-2027---group-10
 ```
 * Execute the workflow scripts inside src/ in the following order:
-    - Step 1 (data acquisition): Render or run `src/File_download.qmd` to fetch the raw TikTok dataset..
+    - Step 1 (data acquisition): Render or run `src/File_download.qmd` to fetch the raw TikTok dataset.
 
      ```bash
      quarto render src/File_download.qmd
      ```
-
      - Input: GitHub raw URL endpoint.
-     - Output: Saves `video_view.csv` directly into `data/raw/`.
+     -  Output: Saves `video_view.csv` directly into `data/raw/`.
      - Behavior: Checks if the file already exists locally to avoid redundant downloads. 
 
    - Step 2 (data analysis & reporting): Execute `src/summary.qmd` or render via terminal to process the data and generate the output summary report.
@@ -76,16 +75,17 @@ cd TikTok-project-2026-2027---group-10
 
 ## Pipeline architecture (setup-input-transformation-output)
 Both pipeline scripts follow strict SITO principles:
-    * Setup: Dynamic environment path detection (src/ vs. project root) and package initialization (tidyverse, dplyr).
-    * Input: Safe data retrieval via HTTP (mode = "wb" for Windows compatibility) or importing from data/raw/.
-    * Transformation: Data cleaning, conditional subsetting (watch_rate > 0.8), variable additions (watched_pct), and NA-safe statistical aggregation (na.rm = TRUE).
-    * Output: Clean console/Quarto report generation and local raw file retention.
+* Setup: Dynamic environment path detection (src/ vs. project root) and package initialization (tidyverse, dplyr).
+* Input: Safe data retrieval via HTTP (mode = "wb" for Windows compatibility) or importing from data/raw/.
+* Transformation: Data cleaning, conditional subsetting (watch_rate > 0.8), variable additions (watched_pct), and NA-safe statistical aggregation (na.rm = TRUE).
+* Output: Clean console/Quarto report generation and local raw file retention.
 
 ## Group members + contribution
+The issues were assigned to the different team members on GitHub.
 * Mohamad Al Hallak: Code validation, issues management, cross-platform path debugging (Windows), and resolving git workflow conflicts.
 * Danny Verkade: Resolving R package warnings/errors, analyzing alternative code implementations, and broad concept exploration.
 * Iris de Bruijn: Command syntax lookup, script structure understanding, and error resolution.
 * Jette Hulsen: Concept clarification, understanding script logic, and troubleshooting script issues.
 
 ## AI tools: 
-AI tools were utilized for code validation, Windows-specific path debugging, and conceptual learning. Full model listings, workflows, and human review protocols are documented in ([AI.md](./AI.md)).
+AI tools were utilized for code validation, Windows-specific path debugging, and conceptual learning. Full model listings, workflows, and human review protocols are documented in [AI.md](./AI.md).
