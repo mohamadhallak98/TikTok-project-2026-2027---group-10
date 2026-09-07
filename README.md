@@ -54,18 +54,18 @@ cd TikTok-project-2026-2027---group-10
     ```bash
     quarto render src/File_download.qmd
     ```
-      * Input: GitHub raw URL endpoint.
-      * Output: Saves video_view.csv directly into data/raw/.
-      * Behavior: Checks if the file already exists locally to avoid redundant downloads.
+    Input: GitHub raw URL endpoint.
+    Output: Saves video_view.csv directly into data/raw/.
+    Behavior: Checks if the file already exists locally to avoid redundant downloads.
     * Step 2 (data analysis & reporting): Execute src/summary.qmd or render via terminal: process data and generate the output summary report.
     ```bash
     quarto render src/summary.qmd
     ```
-      * Input: data/raw/video_view.csv.
-      * Output: Generates src/summary.html containing:
-         * Missing value diagnostics (colSums(is.na())).
-         * Aggregate summary metrics (total creators, avg impressions, watch rate, watch share).
-         * Video performance ranking and length distribution histograms.
+    Input: data/raw/video_view.csv.
+    Output: Generates src/summary.html containing:
+        Missing value diagnostics (colSums(is.na())).
+        Aggregate summary metrics (total creators, avg impressions, watch rate, watch share).
+        Video performance ranking and length distribution histograms.
 * Commit and push with Git: In your Positron terminal, execute the commands you need for adding, committing and pushing.
 
 ## Pipeline architecture (setup-input-transformation-output)
