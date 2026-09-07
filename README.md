@@ -50,15 +50,15 @@ All scripts are written with dynamic relative pathing (basename(getwd())). They 
 cd TikTok-project-2026-2027---group-10
 ```
 * Execute the workflow scripts inside src/ in the following order:
-    - Step 1 (data acquisition): Render or run `src/File_download.qmd` to fetch the raw TikTok dataset.
+    - Step 1 (data acquisition): Render or run `src/File_download.qmd` to fetch the raw TikTok dataset..
 
      ```bash
      quarto render src/File_download.qmd
      ```
 
-      - Input: GitHub raw URL endpoint.
-      - Output: Saves `video_view.csv` directly into `data/raw/`.
-      - Behavior: Checks if the file already exists locally to avoid redundant downloads.
+     - Input: GitHub raw URL endpoint.
+     - Output: Saves `video_view.csv` directly into `data/raw/`.
+     - Behavior: Checks if the file already exists locally to avoid redundant downloads. 
 
    - Step 2 (data analysis & reporting): Execute `src/summary.qmd` or render via terminal to process the data and generate the output summary report.
 
