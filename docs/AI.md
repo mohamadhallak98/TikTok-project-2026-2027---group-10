@@ -1,2 +1,0 @@
-## AI Usage 
-#Models used
