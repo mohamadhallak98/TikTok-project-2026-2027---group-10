@@ -12,11 +12,12 @@ execute:
 This report provides a summary analysis of raw TikTok video views stored in `data/raw/video_view.csv`.
 
 ```{r}
-# Detect correct path relative to working directory
-if (basename(getwd()) == "src") {
-  data_path <- "../data/raw/video_view.csv"
-} else {
-  data_path <- "data/raw/video_view.csv"
+# Define the full path to the CSV file
+file_path <- here("data", "raw", "video_view.csv")
+
+# Create the 'data/raw/' directory if it does not exist
+if (!dir.exists(dirname(file_path))) {
+  dir.create(dirname(file_path), recursive = TRUE)
 }
 
 # Load needed packages
@@ -24,7 +25,7 @@ library(dplyr)
 library(tidyverse)
 
 # Read dataset
-views <- read.csv(data_path)
+views <- read.csv(file_path)
 
 # Basic exploration
 x <- nrow(views)
