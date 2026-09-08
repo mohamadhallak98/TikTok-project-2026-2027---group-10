@@ -6,26 +6,27 @@ format: html
 This script downloads the required dataset from the course repository and saves it directly to the `data/raw` folder.
 ## Download link
 ```{r}
-# Detect correct path relative to working directory
-if (basename(getwd()) == "src") {
-  target_dir <- "../data/raw"
-  file_path <- "../data/raw/video_view.csv"
-} else {
-  target_dir <- "data/raw"
-  file_path <- "data/raw/video_view.csv"
+# Load the 'here' package (install once with install.packages("here"))
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here"); 
+library(here)
+
+# Define the full path to the CSV file
+file_path <- here("data", "raw", "video_view.csv")
+
+# Create the 'data/raw/' directory if it does not exist
+if (!dir.exists(dirname(file_path))) {
+  dir.create(dirname(file_path), recursive = TRUE)
 }
 
-# Creates the map if it does not exist
-if (!dir.exists(target_dir)) {
-  dir.create(target_dir, recursive = TRUE)
-}
-
-# Creates the data file if it does not exist
+# Download the data if the file does not exist
+data_url <- "https://raw.githubusercontent.com/hannesdatta/course-dprep/refs/heads/main/material/project/video_view.csv"
 if (!file.exists(file_path)) {
-  data_url <- "https://raw.githubusercontent.com/hannesdatta/course-dprep/refs/heads/main/material/project/video_view.csv"
   download.file(data_url, destfile = file_path, mode = "wb")
-  message("Dataset downloaded successfully into data/raw/.")
+  message("Dataset successfully downloaded to: ", file_path)
 } else {
-  message("Dataset already exists in data/raw/. Skipping download.")
+  message("Dataset already exists in: ", file_path, ". Skipping download.")
 }
+
 ```
+
+
