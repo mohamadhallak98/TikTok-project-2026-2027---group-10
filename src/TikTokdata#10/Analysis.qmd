@@ -1,0 +1,30 @@
+title: "TikTok watch events summary #10"
+author: "Jette Hulsen"
+format: html
+
+# File to download data
+This script downloads the required dataset from the course repository and saves it directly to the `data/raw` folder.
+## Download link
+
+```{r}
+# Load the 'here' package (install once with install.packages("here"))
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here"); 
+library(here)
+
+# Define the full path to the CSV file
+file_path <- here("data", "raw", "video_view.csv")
+
+# Create the 'data/raw/' directory if it does not exist
+if (!dir.exists(dirname(file_path))) {
+  dir.create(dirname(file_path), recursive = TRUE)
+}
+
+# Download the data if the file does not exist
+data_url <- " https://raw.githubusercontent.com/hannesdatta/course-dprep/refs/heads/main/material/project/coaching_2_data/watch_events.csv"
+if (!file.exists(file_path)) {
+  download.file(data_url, destfile = file_path, mode = "wb")
+  message("Dataset successfully downloaded to: ", file_path)
+} else {
+  message("Dataset already exists in: ", file_path, ". Skipping download.")
+}
+```
