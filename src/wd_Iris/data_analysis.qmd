@@ -15,4 +15,17 @@ if (!file.exists(file_path)) {
 } else {
   message("Dataset already exists in: ", file_path, ". Skipping download.")
 }
+# Inspect data
+users <- read.csv(file_path)
+head(users)
+names(users)
+str(users)
+summary(users)
+# Remove missing values
+colSums(is.na(users))
+sum(!complete.cases(users))
+users_clean <- na.omit(users)
+dim(users)
+dim(users_clean)
+colSums(is.na(users_clean))
 ```
