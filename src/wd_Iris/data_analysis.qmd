@@ -28,4 +28,42 @@ users_clean <- na.omit(users)
 dim(users)
 dim(users_clean)
 colSums(is.na(users_clean))
+# Loading packages
+library(ggplot2)
+library(here)
+# Create plot
+ggplot(users_clean, aes(x = base_videos_watched_mean)) +
+  geom_histogram(
+    aes(fill = after_stat(count)),
+    bins = 30,
+    color = "white",
+    linewidth = 0.5
+  ) +
+  scale_fill_gradient(
+    low = "#dfeaf4",
+    high = "#1f3b75",
+    name = "Count"
+  ) +
+  labs(
+    title = "Distribution of Average Videos Watched",
+    x = "Average videos watched per user",
+    y = "Number of users"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    axis.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    legend.title = element_text(face = "bold"),
+    legend.position = "right"
+  )
+  # Save plot
+out_dir <- here("src", "wd_Iris", "figures")
+ggsave(
+  filename = file.path(out_dir, "average_videos_watched_distribution.png"),
+  width = 8,
+  height = 5,
+  dpi = 300,
+  bg = "white"
+)
 ```
