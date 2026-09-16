@@ -1,0 +1,120 @@
+title: "TikTok watch events summary #10"
+author: "Jette Hulsen"
+format: html
+
+# File to download data
+This script downloads the required dataset from the course repository and saves it directly to the `data/raw` folder.
+## Download link
+
+```{r}
+# Load the 'here' package (install once with install.packages("here"))
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here"); 
+library(here)
+
+# Define the full path to the CSV file
+file_path <- here("data", "raw", "watch_events.csv")
+
+
+# Create the 'data/raw/' directory if it does not exist
+if (!dir.exists(dirname(file_path))) {
+  dir.create(dirname(file_path), recursive = TRUE)
+}
+
+# Download the data if the file does not exist
+data_url <- "https://raw.githubusercontent.com/hannesdatta/course-dprep/refs/heads/main/material/project/coaching_2_data/watch_events.csv"
+if (!file.exists(file_path)) {
+  download.file(data_url, destfile = file_path, mode = "wb")
+  message("Dataset successfully downloaded to: ", file_path)
+} else {
+  message("Dataset already exists in: ", file_path, ". Skipping download.")
+}
+```
+
+## Read dataset 
+```{r}
+# Read dataset
+ watch_events <- read.csv(file_path)
+ View(watch_events)
+
+```
+
+## Checking of ID's
+
+```{r}
+# Cleaning of data 
+identical(watch_events$watch_event_id, watch_events$impression_id)
+
+library(dplyr)
+
+differences <- watch_events %>%
+  filter(
+    watch_event_id != impression_id |
+      xor(is.na(watch_event_id), is.na(impression_id))
+  )
+
+nrow(differences)
+
+```
+
+## Delete raw data
+
+```{r}
+library(dplyr)
+watch_events_clean <- watch_events %>% select(-started_at_raw)
+View(watch_events_clean)
+
+```
+## Checking and solving missing data 
+```{r}
+# Checking for missing data 
+missing_per_column <- colSums(is.na(watch_events_clean))
+missing_per_column
+
+# Only missing watched seconds, but known started at and ended at
+str(watch_events_clean$started_at)
+str(watch_events_clean$ended_at)
+
+# Fixing started at and ended at 
+watch_events_clean$started_at <- as.POSIXct(watch_events_clean$started_at, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+
+watch_events_clean$ended_at <- as.POSIXct(watch_events_clean$ended_at, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+# Fixing missing data
+watch_events_clean<- watch_events_clean %>% mutate(watch_seconds_calc = as.integer(as.numeric(difftime(ended_at, started_at, units = "secs"))))
+
+watch_events_clean <- watch_events_clean %>% select(-watch_seconds) %>% rename(watch_seconds = watch_seconds_calc)
+```
+## Unique values
+
+```{r}
+unique(watch_events_clean$action)
+watch_events_clean <- watch_events_clean %>%
+  mutate(
+    action = factor(
+      action,
+      levels = c(
+        "skip_immediate",
+        "skip_after_partial",
+        "exit_platform",
+        "watch_full"
+      )
+    )
+  )
+```
+
+## Visualizing data
+
+
+```{r}
+library(ggplot2)
+ggplot(data=watch_events_clean, aes(x = action, y = watch_seconds))+geom_col()
+watch_events_clean %>%
+  group_by(action) %>%
+  summarise(avg_watch = mean(watch_seconds, na.rm = TRUE)) %>%
+  ggplot(aes(x = action, y = avg_watch)) +
+  geom_col(fill = "orange") + labs(title = "Average Watch Time by Action", x = "Action", y = "Average Watch Time (seconds)") +
+  theme_minimal()
+
+# Save plot
+path <- here("src", "TikTokdata#10", "data_processed")
+ggsave(filename = file.path(path, "average_watch_time_by_action.png"))
+```
