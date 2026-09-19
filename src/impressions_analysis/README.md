@@ -17,6 +17,11 @@ This directory contains the automated data processing and visualization pipeline
 To avoid file path collisions across team modules, all output figures are saved to an isolated subfolder:
 `gen/output/impressions_analysis/`
 
+## Generated visuals:
+1. `impressions_by_source.png`: Distribution bar chart of total impressions per feed type.
+2. `top_creators_by_score.png`: Boxplot distribution of score totals for top 5 qualifying creators.
+3. `top_recommended_creators.png`: Horizontal bar chart ranking engagement across recommended feed placements.
+
 ## How to run
 1. **Execute the workflow**:
    - Open a terminal in the **project root** and run:
@@ -32,7 +37,3 @@ To avoid file path collisions across team modules, all output figures are saved 
    make clean && make
   ```
 
-## Generated visuals:
-1. `impressions_by_source.png`: Distribution bar chart of total impressions per feed type.
-2. `top_creators_by_score.png`: Boxplot distribution of score totals for top 5 qualifying creators.
-3. `top_recommended_creators.png`: Horizontal bar chart ranking engagement across recommended feed placements.
