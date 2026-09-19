@@ -1,22 +1,28 @@
-# Define R executable (use "Rscript" for Positron/RStudio)
+# Define R executable
 R = Rscript
 
-# Define output files
+# Define output path and target files
+OUTPUT_DIR = gen/output/impressions_analysis
 DATA_OUTPUT = data/raw/impressions.csv
-PLOT_OUTPUT = output/impressions_by_source.png \
-              output/top_creators_by_impressions.png
+PLOT_OUTPUT = $(OUTPUT_DIR)/impressions_by_source.png \
+              $(OUTPUT_DIR)/top_creators_by_score.png \
+              $(OUTPUT_DIR)/top_recommended_creators.png
 
 # Default target (runs all steps)
 all: $(PLOT_OUTPUT)
 
 # Download data if it doesn't exist
-$(DATA_OUTPUT):
+$(DATA_OUTPUT): src/impressions_analysis/download_data.R
 	$(R) src/impressions_analysis/download_data.R
 
-# Generate plots if they don't exist
+# Generate plots if raw data or analysis script changes
 $(PLOT_OUTPUT): $(DATA_OUTPUT) src/impressions_analysis/data_analysis.R
 	$(R) src/impressions_analysis/data_analysis.R
 
-# Clean up (optional)
+# Clean rule (cross-platform OS check)
 clean:
-	rm -f $(DATA_OUTPUT) $(PLOT_OUTPUT)
+ifeq ($(OS),Windows_NT)
+	@if exist gen\output\impressions_analysis\*.png del /q gen\output\impressions_analysis\*.png
+else
+	rm -rf gen/output/impressions_analysis/*.png
+endif
