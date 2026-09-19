@@ -36,4 +36,3 @@ To avoid file path collisions across team modules, all output figures are saved 
    ```bash
    make clean && make
   ```
-
