@@ -9,7 +9,11 @@ data/processed/average_watch_time_by_action.png: src/TikTokdata_10/Analysis.qmd
 	quarto render src/TikTokdata_10/Analysis.qmd --to html
 	@echo "Plot generated: $@"
 
-# Clean up generated files (Windows + Unix)
+# Clean up generated files (should work on both MacBook, Windows, and more)
 clean:
-	@if exist data\processed\average_watch_time_by_action.png ( del /Q data\processed\average_watch_time_by_action.png ) else ( rm -f data/processed/average_watch_time_by_action.png )
+	@if [ -f data/processed/average_watch_time_by_action.png ]; then \
+		rm -f data/processed/average_watch_time_by_action.png; \
+	elif [ -f data\\processed\\average_watch_time_by_action.png ]; then \
+		rm -f data\\processed\\average_watch_time_by_action.png; \
+	fi
 	@echo "Cleaned up generated files."
