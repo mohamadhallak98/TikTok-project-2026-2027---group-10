@@ -4,7 +4,8 @@ R = Rscript
 # Target definitions
 TARGETS = gen/output/session_analysis/session_duration_distribution.png \
           gen/output/session_analysis/top_users_videos.png \
-          gen/output/session_analysis/daily_session_trends.png
+          gen/output/session_analysis/daily_session_trends.png \
+          gen/output/session_analysis/daily_watch_efficiency.png
 
 # Master target
 all: $(TARGETS)
