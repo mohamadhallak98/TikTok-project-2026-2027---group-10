@@ -7,9 +7,16 @@ This script downloads the required dataset from the course repository and saves 
 ## Download link
 
 ```{r}
-# Load the 'here' package (install once with install.packages("here"))
-if (!requireNamespace("here", quietly = TRUE)) install.packages("here"); 
+# Install packages if not already installed
+required_packages <- c("here", "dplyr", "ggplot2", "stringr", "glue")
+install.packages(setdiff(required_packages, rownames(installed.packages())))
+
+# Load all packages
 library(here)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(glue)
 
 # Define the full path to the CSV file
 file_path <- here("data", "raw", "watch_events.csv")
@@ -41,10 +48,8 @@ if (!file.exists(file_path)) {
 ## Checking of ID's
 
 ```{r}
-# Cleaning of data 
+# Checking for duplicates between watch_event_id & impressions_id
 identical(watch_events$watch_event_id, watch_events$impression_id)
-
-library(dplyr)
 
 differences <- watch_events %>%
   filter(
@@ -59,9 +64,7 @@ nrow(differences)
 ## Delete raw data
 
 ```{r}
-library(dplyr)
 watch_events_clean <- watch_events %>% select(-started_at_raw)
-
 
 ```
 ## Checking and solving missing data 
@@ -82,10 +85,15 @@ watch_events_clean$ended_at <- as.POSIXct(watch_events_clean$ended_at, format = 
 watch_events_clean<- watch_events_clean %>% mutate(watch_seconds_calc = as.integer(as.numeric(difftime(ended_at, started_at, units = "secs"))))
 
 watch_events_clean <- watch_events_clean %>% select(-watch_seconds) %>% rename(watch_seconds = watch_seconds_calc)
+
+# Remove duplicate 'impression_id' (identical to 'watch_event_id'), as shown in row 50 onwards
+watch_events_clean <- watch_events_clean %>%
+  select(-impression_id)
 ```
 ## Unique values
 
 ```{r}
+# Check for unique values, and ordered them
 unique(watch_events_clean$action)
 watch_events_clean <- watch_events_clean %>%
   mutate(
@@ -105,16 +113,17 @@ watch_events_clean <- watch_events_clean %>%
 
 
 ```{r}
-library(ggplot2)
-ggplot(data=watch_events_clean, aes(x = action, y = watch_seconds))+geom_col()
-watch_events_clean %>%
+# Plot average watch time by action
+avg_watch_plot <- watch_events_clean %>%
   group_by(action) %>%
   summarise(avg_watch = mean(watch_seconds, na.rm = TRUE)) %>%
   ggplot(aes(x = action, y = avg_watch)) +
-  geom_col(fill = "orange") + labs(title = "Average Watch Time by Action", x = "Action", y = "Average Watch Time (seconds)") +
+  geom_col(fill = "orange") +
+  labs(title = "Average Watch Time by Action", x = "Action", y = "Average Watch Time (seconds)") +
   theme_minimal()
 
-# Save plot
-path <- here("data", "processed")
-ggsave(filename = file.path(path, "average_watch_time_by_action.png"))
+# Save plot with dynamic filename
+plot_filename <- glue("average_watch_time_{Sys.Date()}.png")
+ggsave(filename = here("data", "processed", plot_filename), plot = avg_watch_plot)
+avg_watch_plot
 ```
