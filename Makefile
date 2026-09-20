@@ -11,9 +11,7 @@ data/processed/average_watch_time_by_action.png: src/TikTokdata_10/Analysis.qmd
 
 # Clean up generated files (should work on both MacBook, Windows, and more)
 clean:
-	@if [ -f data/processed/average_watch_time_by_action.png ]; then \
-		rm -f data/processed/average_watch_time_by_action.png; \
-	elif [ -f data\\processed\\average_watch_time_by_action.png ]; then \
-		rm -f data\\processed\\average_watch_time_by_action.png; \
-	fi
+	@rm -f data/processed/average_watch_time_*.png 2> /dev/null || \
+	 del /Q data\processed\average_watch_time_*.png 2> nul || \
+	 true
 	@echo "Cleaned up generated files."

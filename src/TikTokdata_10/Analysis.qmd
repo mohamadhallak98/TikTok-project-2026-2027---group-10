@@ -8,7 +8,7 @@ This script downloads the required dataset from the course repository and saves 
 
 ```{r}
 # Install packages if not already installed
-required_packages <- c("here", "dplyr", "ggplot2", "stringr", "glue")
+required_packages <- c("here", "dplyr", "ggplot2", "stringr", "glue", "purrr")
 install.packages(setdiff(required_packages, rownames(installed.packages())))
 
 # Load all packages
@@ -17,6 +17,7 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(glue)
+library(purrr)
 
 # Define the full path to the CSV file
 file_path <- here("data", "raw", "watch_events.csv")
@@ -113,10 +114,13 @@ watch_events_clean <- watch_events_clean %>%
 
 
 ```{r}
-# Plot average watch time by action
-avg_watch_plot <- watch_events_clean %>%
+# Calculate average watch time by action (using reframe + map_dbl)
+avg_watch_by_action <- watch_events_clean %>%
   group_by(action) %>%
-  summarise(avg_watch = mean(watch_seconds, na.rm = TRUE)) %>%
+  reframe(avg_watch = mean(watch_seconds, na.rm = TRUE))  
+
+# Plot the results
+avg_watch_plot <- avg_watch_by_action %>%
   ggplot(aes(x = action, y = avg_watch)) +
   geom_col(fill = "orange") +
   labs(title = "Average Watch Time by Action", x = "Action", y = "Average Watch Time (seconds)") +

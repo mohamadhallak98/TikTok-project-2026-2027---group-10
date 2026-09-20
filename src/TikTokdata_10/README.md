@@ -1,28 +1,37 @@
+------------------------------------------------------------------------
+
+editor_options: markdown: wrap: 72 ---
+
 # TikTok data analysis project (#10)
 
 ## Project goal
-This project cleans the giving TikTok Watch Events data, so ggplot analyzes can and will be formed. 
+
+This project cleans the giving TikTok Watch Events data, so ggplot analyzes can and will be formed.
+
+## Code Improvements
+
+- **Functional Programming**: Used `purrr::map_dbl()` for group-wise aggregations (see `Analysis.qmd`).
+- **String Interpolation**: Dynamic plot filenames with `glue()`.
+- **Data Cleaning**: Removed duplicate `impression_id` column (identical to `watch_event_id`), as suggested in the PR.
 
 ## Requirements
-To run this project locally, ensure you have the following installed:
-* **R** (v4.2.0 or higher)
-* **Quarto CLI**
-* **Positron** (or RStudio)
-* **R Packages** (ggplot2, dplyr & here)
 
+To run this project locally, ensure you have the following installed: \* **R** (v4.2.0 or higher) \* **Quarto CLI** \* **Positron** (or RStudio) \* **R Packages**: ggplot2, dplyr, here, stringr, glue, purrr
 
-## Reproducing analyses
+# How to Run
 
-* Clone this repository to your local workspace:
-```PowerShell
- git clone https://github.com/mohamadhallak98/TikTok-project-2026-2027---group-10.git
+1.  **Execute the Workflow**: Open a terminal in the **project root** and run:
+
+``` bash
+ make
 ```
-* Navigate into the project root directory:
-```bash
-cd TikTok-project-2026-2027---group-10
+
+2.  **To test a fresh build** (cleans old outputs first):
+
+``` bash
+make clean && make
 ```
-* Run 
-  - quarto render src/TikTokdata_10/Analysis.qmd
 
 ## Expected output
-At the end of this project a ggplot will be made and visualized in an image. 
+
+At the end of this project a ggplot will be made and visualized in an image.
