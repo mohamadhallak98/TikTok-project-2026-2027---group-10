@@ -13,7 +13,6 @@ if (!file.exists(input_file)) {
 }
 
 sessions_raw <- read_csv(input_file)
-
 sessions_clean <- sessions_raw %>%
   drop_na() %>%
   mutate(
@@ -79,5 +78,25 @@ p3 <- ggplot(daily_trends, aes(x = session_date, y = total_sessions)) +
   )
 
 ggsave(here("gen", "output", "session_analysis", "daily_session_trends.png"), plot = p3, width = 7, height = 4.5)
+
+# Plot 4: average daily watch efficiency
+daily_efficiency <- sessions_clean %>%
+  group_by(session_date) %>%
+  summarise(
+    avg_watch_efficiency = mean(watch_efficiency, na.rm = TRUE)
+  )
+
+p4 <- ggplot(daily_efficiency, aes(x = session_date, y = avg_watch_efficiency)) +
+  geom_line(color = "pink", linewidth = 1) +
+  geom_point(color = "pink", size = 2) +
+  theme_minimal() +
+  labs(
+    title = "Average daily watch efficiency",
+    subtitle = "Average percentage of session duration spent watching videos",
+    x = "Login date",
+    y = "Average watch efficiency (%)"
+  )
+
+ggsave(here("gen", "output", "session_analysis", "daily_watch_efficiency.png"), plot = p4, width = 7, height = 4.5)
 
 message("All figures saved to gen/output/session_analysis/")
