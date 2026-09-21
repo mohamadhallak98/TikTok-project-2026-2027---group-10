@@ -1,10 +1,10 @@
-# Tiktok project - Inspect and analyze Tiktok users dataset
+# Tiktok project - Inspect and visualize Tiktok users dataset
 
 ## Goal
-The goal of this project is to inspect and visualize the tiktok users dataset. The focus is on user engagement by looking at the average number of videos watched per user.
+The goal of this project is to inspect and visualize the TikTok users dataset. First the TikTok data is cleaned, after it is visualized with a gplot focussed on user engagement by looking at the average number of videos watched per user.
 
 ## Data
-This analysis uses the `users.csv` dataset. This dataset contains user IDs, preference scores for content categories and variables that measure how the users behave on the platform. The main variable that was used for this analysis is 'base_videos_watched_mean' which is the average number of videos watched per user.
+This analysis uses the `users.csv` dataset. This dataset contains user IDs, preference scores for content categories and user behaviour on TikTok. The main variable used for this analysis is 'base_videos_watched_mean' which is the average number of videos watched per user.
 
 ## Requirements
 - R 
@@ -20,7 +20,7 @@ The data was inspected using:
 - str()
 - summary()
 
-This showed 200 rows contained missing values and these were deleted using na.omit().
+This showed 200 rows containing missing values, these were deleted using na.omit().
 
 ## Reproducing the analysis
 * Clone this repository to your local workspace:
@@ -38,8 +38,8 @@ make -C src/wd_Iris
 - 
 
 ## Expected output
-After running the analysis, the following file is generated:
+After running the analysis, the following image is generated:
 
 src/wd_Iris/figures/average_videos_watched_distribution.png
 
-This file contains a histogram showing the distribution of average amount of videos watched per user. 
+This image contains a histogram showing the distribution of average amount of videos watched per user. 
