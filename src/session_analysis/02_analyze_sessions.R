@@ -12,7 +12,7 @@ if (!file.exists(input_file)) {
   stop("Input file 'data/raw/sessions.csv' not found. Run 01_download_data.R first!")
 }
 
-sessions_raw <- read_csv(input_file)
+sessions_raw <- read.csv(input_file)
 sessions_clean <- sessions_raw %>%
   drop_na() %>%
   mutate(
