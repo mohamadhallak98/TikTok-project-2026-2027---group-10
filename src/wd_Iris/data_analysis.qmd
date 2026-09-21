@@ -22,15 +22,17 @@ if (!file.exists(file_path)) {
   message("Dataset already exists in: ", file_path, ". Skipping download.")
 }
 
+# Naming dataset 
 users <- read.csv(file_path)
 
 #Install packages 
-required_packages <- c("here", "ggplot2")
+required_packages <- c("here", "ggplot2", "glue")
 install.packages(setdiff(required_packages, rownames(installed.packages())))
 
 # Loading packages
 library(ggplot2)
 library(here)
+library(glue)
 ```
 
 ## Cleaning the data 
@@ -54,7 +56,7 @@ colSums(is.na(users_clean))
 
 ```{r}
 # Create plot
-ggplot(users_clean, aes(x = base_videos_watched_mean)) +
+histogram_users<- ggplot(users_clean, aes(x = base_videos_watched_mean)) +
   geom_histogram(
     aes(fill = after_stat(count)),
     bins = 30,
@@ -81,9 +83,15 @@ ggplot(users_clean, aes(x = base_videos_watched_mean)) +
   )
 
   # Save plot
-out_dir <- here("src", "wd_Iris", "figures")
+  file_path_merge<- here("gen", "output", "users_analysis")
+    if (!dir.exists(dirname(file_path_merge))) {
+  dir.create(dirname(file_path_merge), recursive = TRUE)
+}
+
+plot_filename<- glue("average_videos_watched_distribution_{Sys.Date()}.png")
+
 ggsave(
-  filename = file.path(out_dir, "average_videos_watched_distribution.png"),
+  filename=here("gen", "output", "users_analysis", plot_filename), plot= histogram_users,
   width = 8,
   height = 5,
   dpi = 300,

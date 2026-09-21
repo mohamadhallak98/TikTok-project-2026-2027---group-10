@@ -33,7 +33,11 @@ cd TikTok-project-2026-2027---group-10
 ```
 * Run the analysis using the makefile:
 ```
-make -C src/wd_Iris
+make 
+```
+* Run a fresh analysis using:
+```
+make clean && make
 ```
 - 
 
