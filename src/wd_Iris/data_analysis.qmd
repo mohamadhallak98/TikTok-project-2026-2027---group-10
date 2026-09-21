@@ -23,6 +23,14 @@ if (!file.exists(file_path)) {
 }
 
 users <- read.csv(file_path)
+
+#Install packages 
+required_packages <- c("here", "ggplot2")
+install.packages(setdiff(required_packages, rownames(installed.packages())))
+
+# Loading packages
+library(ggplot2)
+library(here)
 ```
 
 ## Cleaning the data 
@@ -45,10 +53,6 @@ colSums(is.na(users_clean))
 ## Making of plots 
 
 ```{r}
-# Loading packages
-library(ggplot2)
-library(here)
-
 # Create plot
 ggplot(users_clean, aes(x = base_videos_watched_mean)) +
   geom_histogram(
@@ -85,4 +89,6 @@ ggsave(
   dpi = 300,
   bg = "white"
 )
+
+
 ```
