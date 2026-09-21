@@ -1,16 +1,16 @@
-all: gen/output/users_analysis/average_videos_watched_distribution_*png
+all: gen/output/users_analysis/average_videos_watched_distribution.png
 
 
 # Generate the plot 
-gen/output/users_analysis/average_videos_watched_distribution_*png: src/wd_Iris/data_analysis.qmd
-	quarto render src/wd_Iris/data_analysis.qmd
+gen/output/users_analysis/average_videos_watched_distribution.png: src/users_analysis/data_analysis.qmd
+	quarto render src/users_analysis/data_analysis.qmd
 
 
 # Clean 
 clean:
 ifeq ($(OS),Windows_NT)
-	@if exist gen\output\users_analysis\average_videos_watched_distribution_*.png del /Q gen\output\users_analysis\average_videos_watched_distribution_*.png
+	@if exist "gen\output\users_analysis" rmdir /S /Q "gen\output\users_analysis"
 else
-	rm -f gen/output/users_analysis/average_videos_watched_distribution_*.png
+	rm -rf gen/output/users_analysis
 endif
-
+	@echo "Cleaned up generated files."

@@ -82,21 +82,23 @@ histogram_users<- ggplot(users_clean, aes(x = base_videos_watched_mean)) +
     legend.position = "right"
   )
 
-  # Save plot
-  file_path_merge<- here("gen", "output", "users_analysis")
-    if (!dir.exists(dirname(file_path_merge))) {
-  dir.create(dirname(file_path_merge), recursive = TRUE)
-}
-
 plot_filename<- glue("average_videos_watched_distribution_{Sys.Date()}.png")
 
+## Create output directory (relative to project root)
+output_dir <- "../../gen/output/users_analysis/average_videos_watched_distribution"  
+
+# Navigates up from src/TikTokdata_10/
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
 ggsave(
-  filename=here("gen", "output", "users_analysis", plot_filename), plot= histogram_users,
+  filename=file.path(output_dir, plot_filename), plot= histogram_users,
   width = 8,
   height = 5,
   dpi = 300,
   bg = "white"
 )
+
 
 
 ```
