@@ -117,7 +117,7 @@ watch_events_clean <- watch_events_clean %>%
 # Calculate average watch time by action (using reframe + map_dbl)
 avg_watch_by_action <- watch_events_clean %>%
   group_by(action) %>%
-  reframe(avg_watch = mean(watch_seconds, na.rm = TRUE))  
+  reframe(avg_watch = mean(watch_seconds, na.rm = TRUE))
 
 # Plot the results
 avg_watch_plot <- avg_watch_by_action %>%
@@ -126,8 +126,15 @@ avg_watch_plot <- avg_watch_by_action %>%
   labs(title = "Average Watch Time by Action", x = "Action", y = "Average Watch Time (seconds)") +
   theme_minimal()
 
+# Create output directory (relative to project root)
+output_dir <- "../../gen/output/watch_event_analysis"  
+# Navigates up from src/TikTokdata_10/
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
 # Save plot with dynamic filename
 plot_filename <- glue("average_watch_time_{Sys.Date()}.png")
-ggsave(filename = here("data", "processed", plot_filename), plot = avg_watch_plot)
+ggsave(filename = file.path(output_dir, plot_filename), plot = avg_watch_plot)
 avg_watch_plot
 ```
