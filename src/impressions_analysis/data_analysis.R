@@ -25,7 +25,7 @@ if (!file.exists(impressions_path)) {
   stop("Data file not found. Please run download_data.R first.")
 }
 
-impressions_raw <- read_csv(impressions_path, show_col_types = FALSE)
+impressions_raw <- read.csv(impressions_path)
 
 # Checking the data
 head(impressions_raw)
