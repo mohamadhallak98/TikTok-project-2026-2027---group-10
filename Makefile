@@ -1,15 +1,16 @@
-all: src/wd_Iris/figures/average_videos_watched_distribution.png
+all: gen/output/users_analysis/average_videos_watched_distribution_*png
 
 
 # Generate the plot 
-src/wd_Iris/figures/average_videos_watched_distribution.png: src/wd_Iris/data_analysis.qmd
+gen/output/users_analysis/average_videos_watched_distribution_*png: src/wd_Iris/data_analysis.qmd
 	quarto render src/wd_Iris/data_analysis.qmd
 
 
-# Clean yo generated files
+# Clean 
 clean:
 ifeq ($(OS),Windows_NT)
-	@if exist src\wd_Iris\figures\average_videos_watched_distribution.png del /Q src\wd_Iris\figures\average_videos_watched_distribution.png
+	@if exist gen\output\users_analysis\average_videos_watched_distribution_*.png del /Q gen\output\users_analysis\average_videos_watched_distribution_*.png
 else
-	rm -f src/wd_Iris/figures/average_videos_watched_distribution.png
+	rm -f gen/output/users_analysis/average_videos_watched_distribution_*.png
 endif
+
