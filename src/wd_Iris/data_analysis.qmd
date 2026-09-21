@@ -1,4 +1,9 @@
-
+---
+title: "Data analysis Issue 7"
+format: html
+author: Iris 
+purpose: clean the tiktok user data and visualize the data 
+---
 
 ```{r}
 # Downloading dataset
@@ -16,12 +21,18 @@ if (!file.exists(file_path)) {
 } else {
   message("Dataset already exists in: ", file_path, ". Skipping download.")
 }
-# Inspect data
+
 users <- read.csv(file_path)
+```
+
+## Cleaning the data 
+```{r}
+# Inspect data
 head(users)
 names(users)
 str(users)
 summary(users)
+
 # Remove missing values
 colSums(is.na(users))
 sum(!complete.cases(users))
@@ -29,9 +40,15 @@ users_clean <- na.omit(users)
 dim(users)
 dim(users_clean)
 colSums(is.na(users_clean))
+```
+
+## Making of plots 
+
+```{r}
 # Loading packages
 library(ggplot2)
 library(here)
+
 # Create plot
 ggplot(users_clean, aes(x = base_videos_watched_mean)) +
   geom_histogram(
@@ -58,6 +75,7 @@ ggplot(users_clean, aes(x = base_videos_watched_mean)) +
     legend.title = element_text(face = "bold"),
     legend.position = "right"
   )
+
   # Save plot
 out_dir <- here("src", "wd_Iris", "figures")
 ggsave(
