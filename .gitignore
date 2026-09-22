@@ -1,5 +1,12 @@
-# Ignore all raw and processed dataset files
-data/*
+# Ignore dataset contents inside data subfolders
+data/raw/*
+data/processed/*
 
-# Exception: keep tracking folder placeholders on GitHub
+# Keep gitkeep placeholders so directory structures exist on GitHub
 !data/**/.gitkeep
+
+# Ignore temporary R build artifacts
+Rplots.pdf
+.Rproj.user
+.Rhistory
+.RData

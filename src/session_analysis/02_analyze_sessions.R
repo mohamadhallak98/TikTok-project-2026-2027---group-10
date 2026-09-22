@@ -1,0 +1,145 @@
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
+if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
+if (!requireNamespace("scales", quietly = TRUE)) install.packages("scales")
+if(!requireNamespace("glue", quietly = TRUE)) install.packages("glue")
+ 
+library(here)
+library(tidyverse)
+library(scales)
+library(glue)
+ 
+input_file <- here("data", "raw", "sessions.csv")
+ 
+if (!file.exists(input_file)) {
+  stop("Input file 'data/raw/sessions.csv' not found. Run 01_download_data.R first!")
+}
+ 
+sessions_raw <- read.csv(input_file)
+sessions_clean <- sessions_raw %>%
+  drop_na() %>%
+  mutate(
+    session_date = as.Date(login_at),
+    watch_efficiency = ifelse(session_duration_sec > 0, (watch_seconds / session_duration_sec) * 100, 0)
+  )
+ 
+# Isolated target output folder
+output_dir <- here("gen", "output", "session_analysis")
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+ 
+# Dynamic date for filenames
+run_date <- Sys.Date()
+ 
+# Plot 1: Histogram (Log-transformed duration)
+p1 <- ggplot(sessions_clean, aes(x = session_duration_sec)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white", alpha = 0.85) +
+  scale_x_log10() +
+  theme_minimal() +
+  labs(
+    title = "Distribution of user session duration",
+    subtitle = "Log10 transformed scale showing session lengths in seconds",
+    x = "Session duration (seconds, Log10 scale)",
+    y = "Number of sessions"
+  )
+ 
+plot1_filename <- glue("session_duration_distribution_{run_date}.png")
+ 
+ggsave(
+  filename = file.path(output_dir, plot1_filename),
+  plot = p1,
+  width = 7,
+  height = 4.5
+)
+ 
+p1
+ 
+# Plot 2: Bar chart (Top 10 users with direct numeric labels)
+top_users <- sessions_clean %>%
+  group_by(user_id) %>%
+  summarise(total_videos = sum(videos_viewed, na.rm = TRUE), .groups = "drop") %>%
+  slice_max(order_by = total_videos, n = 10)
+ 
+p2 <- ggplot(top_users, aes(x = reorder(as.factor(user_id), total_videos), y = total_videos)) +
+  geom_col(fill = "steelblue", width = 0.7) +
+  geom_text(aes(label = comma(total_videos)), hjust = -0.15, size = 3.5, fontface = "bold") +
+  coord_flip() +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+  theme_minimal() +
+  labs(
+    title = "Top 10 active users by videos viewed",
+    subtitle = "Comparing total video consumption across top account IDs",
+    x = "User ID",
+    y = "Total videos viewed"
+  )
+ 
+plot2_filename <- glue("top_users_videos_{run_date}.png")
+ 
+ggsave(
+  filename = file.path(output_dir, plot2_filename),
+  plot = p2,
+  width = 7,
+  height = 4.5
+)
+ 
+p2
+ 
+# Plot 3: Time series line chart (daily trends)
+daily_trends <- sessions_clean %>%
+  group_by(session_date) %>%
+  summarise(total_sessions = n(), .groups = "drop")
+ 
+p3 <- ggplot(daily_trends, aes(x = session_date, y = total_sessions)) +
+  geom_line(color = "darkgreen", linewidth = 1) +
+  geom_point(color = "darkgreen", size = 2) +
+  theme_minimal() +
+  labs(
+    title = "Daily session activity trends",
+    subtitle = "Tracking total daily login sessions over time",
+    x = "Login date",
+    y = "Total active sessions"
+  )
+ 
+plot3_filename <- glue("daily_session_trends_{run_date}.png")
+ 
+ggsave(
+  filename = file.path(output_dir, plot3_filename),
+  plot = p3,
+  width = 7,
+  height = 4.5
+)
+ 
+p3
+ 
+# Plot 4: average daily watch efficiency
+daily_efficiency <- sessions_clean %>%
+  group_by(session_date) %>%
+  summarise(
+    avg_watch_efficiency = mean(watch_efficiency, na.rm = TRUE),
+    .groups = "drop"
+  )
+ 
+p4 <- ggplot(daily_efficiency, aes(x = session_date, y = avg_watch_efficiency)) +
+  geom_line(color = "pink", linewidth = 1) +
+  geom_point(color = "pink", size = 2) +
+  theme_minimal() +
+  labs(
+    title = "Average daily watch efficiency",
+    subtitle = "Average percentage of session duration spent watching videos",
+    x = "Login date",
+    y = "Average watch efficiency (%)"
+  )
+ 
+plot4_filename <- glue("daily_watch_efficiency_{run_date}.png")
+ 
+ggsave(
+  filename = file.path(output_dir, plot4_filename),
+  plot = p4,
+  width = 7,
+  height = 4.5
+)
+ 
+p4
+ 
+message("All figures saved to gen/output/session_analysis/")
+ 
