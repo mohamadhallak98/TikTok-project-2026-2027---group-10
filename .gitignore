@@ -2,7 +2,7 @@
 data/raw/*
 data/processed/*
 
-# Keep gitkeep placeholders so directory structures exist on GitHub
+# Exception: keep tracking folder placeholders on GitHub
 !data/**/.gitkeep
 
 # Ignore temporary R build artifacts
