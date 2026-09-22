@@ -13,10 +13,17 @@ WATCH_TARGETS = gen/output/watch_event_analysis/average_watch_time_by_action.png
 # Target definitions for Users Analysis
 USER_TARGETS = gen/output/users_analysis/average_videos_watched_distribution.png
 
+# Target definitions for Impressions Analysis
+IMPRESSION_DIR = gen/output/impressions_analysis
+IMPRESSION_DATA = data/raw/impressions.csv
+IMPRESSION_TARGETS = $(IMPRESSION_DIR)/impressions_by_source.png \
+                     $(IMPRESSION_DIR)/top_creators_by_score.png \
+                     $(IMPRESSION_DIR)/top_recommended_creators.png
+
 .PHONY: all clean
 
-# Master target: Builds ALL THREE analysis pipelines
-all: $(WATCH_TARGETS) $(SESSION_TARGETS) $(USER_TARGETS)
+# Master target: Builds ALL FOUR analysis pipelines
+all: $(WATCH_TARGETS) $(SESSION_TARGETS) $(USER_TARGETS) $(IMPRESSION_TARGETS)
 
 # --- Rules for Watch Event Analysis ---
 gen/output/watch_event_analysis/average_watch_time_by_action.png: src/TikTokdata_10/Analysis.qmd
@@ -34,11 +41,18 @@ $(SESSION_TARGETS): src/session_analysis/02_analyze_sessions.R data/raw/sessions
 gen/output/users_analysis/average_videos_watched_distribution.png: src/users_analysis/data_analysis.qmd
 	quarto render src/users_analysis/data_analysis.qmd
 
+# --- Rules for Impressions Analysis ---
+$(IMPRESSION_DATA): src/impressions_analysis/download_data.R
+	$(R) src/impressions_analysis/download_data.R
+
+$(IMPRESSION_TARGETS): $(IMPRESSION_DATA) src/impressions_analysis/data_analysis.R
+	$(R) src/impressions_analysis/data_analysis.R
+
 # --- Cross-Platform Clean Rule ---
 clean:
 ifeq ($(OS),Windows_NT)
-	powershell -Command "Remove-Item -Recurse -Force 'gen\output\watch_event_analysis', 'gen\output\session_analysis', 'gen\output\users_analysis'" 2> nul || true
+	-powershell -Command "Remove-Item -Recurse -Force 'gen\output\watch_event_analysis', 'gen\output\session_analysis', 'gen\output\users_analysis', 'gen\output\impressions_analysis', 'Rplots.pdf' -ErrorAction SilentlyContinue"
 else
-	rm -rf gen/output/watch_event_analysis/ gen/output/session_analysis/ gen/output/users_analysis/ 2> /dev/null || true
+	-rm -rf gen/output/watch_event_analysis/ gen/output/session_analysis/ gen/output/users_analysis/ gen/output/impressions_analysis/ Rplots.pdf 2> /dev/null || true
 endif
-	@echo "Cleaned up all generated files."
+	@echo "Cleaned up all generated files and temporary Rplots.pdf."
