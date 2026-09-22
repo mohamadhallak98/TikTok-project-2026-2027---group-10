@@ -11,7 +11,13 @@ gen/output/watch_event_analysis/average_watch_time_by_action.png: src/TikTokdata
 
 # Clean up generated files (cross-platform)
 clean:
-	@rm -rf gen/output/watch_event_analysis/ 2> /dev/null || \
-	 rmdir /Q /S gen\output\watch_event_analysis 2> nul || \
-	 true
+ifeq ($(OS),Windows_NT)
+	
+# Windows: Use PowerShell (works in Git Bash, CMD, and WSL)
+	powershell -Command "Remove-Item -Recurse -Force 'gen\output\watch_event_analysis'" 2> nul || true
+else
+	
+# Unix/macOS: Use rm -rf
+	rm -rf gen/output/watch_event_analysis/ 2> /dev/null || true
+endif
 	@echo "Cleaned up generated files."
