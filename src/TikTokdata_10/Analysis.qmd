@@ -1,0 +1,140 @@
+title: "TikTok watch events summary #10"
+author: "Jette Hulsen"
+format: html
+
+# File to download data
+This script downloads the required dataset from the course repository and saves it directly to the `data/raw` folder.
+## Download link
+
+```{r}
+# Install packages if not already installed
+required_packages <- c("here", "dplyr", "ggplot2", "stringr", "glue", "purrr")
+install.packages(setdiff(required_packages, rownames(installed.packages())))
+
+# Load all packages
+library(here)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(glue)
+library(purrr)
+
+# Define the full path to the CSV file
+file_path <- here("data", "raw", "watch_events.csv")
+
+
+# Create the 'data/raw/' directory if it does not exist
+if (!dir.exists(dirname(file_path))) {
+  dir.create(dirname(file_path), recursive = TRUE)
+}
+
+# Download the data if the file does not exist
+data_url <- "https://raw.githubusercontent.com/hannesdatta/course-dprep/refs/heads/main/material/project/coaching_2_data/watch_events.csv"
+if (!file.exists(file_path)) {
+  download.file(data_url, destfile = file_path, mode = "wb")
+  message("Dataset successfully downloaded to: ", file_path)
+} else {
+  message("Dataset already exists in: ", file_path, ". Skipping download.")
+}
+```
+
+## Read dataset 
+```{r}
+# Read dataset
+ watch_events <- read.csv(file_path)
+
+
+```
+
+## Checking of ID's
+
+```{r}
+# Checking for duplicates between watch_event_id & impressions_id
+identical(watch_events$watch_event_id, watch_events$impression_id)
+
+differences <- watch_events %>%
+  filter(
+    watch_event_id != impression_id |
+      xor(is.na(watch_event_id), is.na(impression_id))
+  )
+
+nrow(differences)
+
+```
+
+## Delete raw data
+
+```{r}
+watch_events_clean <- watch_events %>% select(-started_at_raw)
+
+```
+## Checking and solving missing data 
+```{r}
+# Checking for missing data 
+missing_per_column <- colSums(is.na(watch_events_clean))
+missing_per_column
+
+# Only missing watched seconds, but known started at and ended at
+str(watch_events_clean$started_at)
+str(watch_events_clean$ended_at)
+
+# Fixing started at and ended at 
+watch_events_clean$started_at <- as.POSIXct(watch_events_clean$started_at, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+
+watch_events_clean$ended_at <- as.POSIXct(watch_events_clean$ended_at, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+# Fixing missing data
+watch_events_clean<- watch_events_clean %>% mutate(watch_seconds_calc = as.integer(as.numeric(difftime(ended_at, started_at, units = "secs"))))
+
+watch_events_clean <- watch_events_clean %>% select(-watch_seconds) %>% rename(watch_seconds = watch_seconds_calc)
+
+# Remove duplicate 'impression_id' (identical to 'watch_event_id'), as shown in row 50 onwards
+watch_events_clean <- watch_events_clean %>%
+  select(-impression_id)
+```
+## Unique values
+
+```{r}
+# Check for unique values, and ordered them
+unique(watch_events_clean$action)
+watch_events_clean <- watch_events_clean %>%
+  mutate(
+    action = factor(
+      action,
+      levels = c(
+        "skip_immediate",
+        "skip_after_partial",
+        "exit_platform",
+        "watch_full"
+      )
+    )
+  )
+```
+
+## Visualizing data
+
+
+```{r}
+# Calculate average watch time by action (using reframe + map_dbl)
+avg_watch_by_action <- watch_events_clean %>%
+  group_by(action) %>%
+  reframe(avg_watch = mean(watch_seconds, na.rm = TRUE))
+
+# Plot the results
+avg_watch_plot <- avg_watch_by_action %>%
+  ggplot(aes(x = action, y = avg_watch)) +
+  geom_col(fill = "orange") +
+  labs(title = "Average Watch Time by Action", x = "Action", y = "Average Watch Time (seconds)") +
+  theme_minimal()
+
+# Create output directory (relative to project root)
+output_dir <- "../../gen/output/watch_event_analysis"  
+# Navigates up from src/TikTokdata_10/
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
+# Save plot with dynamic filename
+plot_filename <- glue("average_watch_time_{Sys.Date()}.png")
+ggsave(filename = file.path(output_dir, plot_filename), plot = avg_watch_plot)
+avg_watch_plot
+```
