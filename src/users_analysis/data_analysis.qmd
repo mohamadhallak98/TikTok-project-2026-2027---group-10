@@ -1,0 +1,104 @@
+---
+title: "Data analysis Issue 7"
+format: html
+author: Iris 
+purpose: clean the tiktok user data and visualize the data 
+---
+
+```{r}
+# Downloading dataset
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here"); 
+library(here)
+
+file_path <- here("data", "raw", "users.csv")
+if (!dir.exists(dirname(file_path))) {
+  dir.create(dirname(file_path), recursive = TRUE)
+}
+data_url <- "https://raw.githubusercontent.com/hannesdatta/course-dprep/refs/heads/main/material/project/coaching_2_data/users.csv"
+if (!file.exists(file_path)) {
+  download.file(data_url, destfile = file_path, mode = "wb")
+  message("Dataset successfully downloaded to: ", file_path)
+} else {
+  message("Dataset already exists in: ", file_path, ". Skipping download.")
+}
+
+# Naming dataset 
+users <- read.csv(file_path)
+
+#Install packages 
+required_packages <- c("here", "ggplot2", "glue")
+install.packages(setdiff(required_packages, rownames(installed.packages())))
+
+# Loading packages
+library(ggplot2)
+library(here)
+library(glue)
+```
+
+## Cleaning the data 
+```{r}
+# Inspect data
+head(users)
+names(users)
+str(users)
+summary(users)
+
+# Remove missing values
+colSums(is.na(users))
+sum(!complete.cases(users))
+users_clean <- na.omit(users)
+dim(users)
+dim(users_clean)
+colSums(is.na(users_clean))
+```
+
+## Making of plots 
+
+```{r}
+# Create plot
+histogram_users<- ggplot(users_clean, aes(x = base_videos_watched_mean)) +
+  geom_histogram(
+    aes(fill = after_stat(count)),
+    bins = 30,
+    color = "white",
+    linewidth = 0.5
+  ) +
+  scale_fill_gradient(
+    low = "#dfeaf4",
+    high = "#1f3b75",
+    name = "Count"
+  ) +
+  labs(
+    title = "Distribution of Average Videos Watched",
+    x = "Average videos watched per user",
+    y = "Number of users"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    axis.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    legend.title = element_text(face = "bold"),
+    legend.position = "right"
+  )
+
+plot_filename<- glue("average_videos_watched_distribution_{Sys.Date()}.png")
+
+## Create output directory (relative to project root)
+output_dir <- "../../gen/output/users_analysis/average_videos_watched_distribution"  
+
+# Navigates up from src/TikTokdata_10/
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+ggsave(
+  filename=file.path(output_dir, plot_filename), plot= histogram_users,
+  width = 8,
+  height = 5,
+  dpi = 300,
+  bg = "white"
+)
+
+
+
+```
