@@ -1,0 +1,29 @@
+# Final knitted report 
+This document brings everything together into one final, knitted report: the basic data inspection, the analyses/summaries, the regression analysis, and your conclusions, combined into a single PDF.
+
+## Basic data inspection
+
+```{r}
+# Check for required packages, and install if missing
+required_packages <- c("tidyverse", "here", "glue", "scales", "purrr")
+missing_packages <- required_packages[!vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)]
+
+if (length(missing_packages) > 0) {
+  install.packages(missing_packages)
+}
+
+# Explicitly load all required packages, including newly introduced packages
+library(tidyverse) # Includes ggplot2, dplyr, readr, stringr
+library(here)      # Safe relative path resolution
+library(glue)      # Tutorial technique: String interpolation
+library(scales)    # Axis and text number formatting (e.g., comma labels)
+library(purrr)     # Tutorial technique: Functional programming and loops (iwalk)
+
+
+```
+
+## The analyses
+
+## Regression analysis
+
+## Conclusion
