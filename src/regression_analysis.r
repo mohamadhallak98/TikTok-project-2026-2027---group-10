@@ -1,4 +1,4 @@
-# Regression analysis
+# Loading required packages
 
 if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
 if (!requireNamespace("DBI", quietly = TRUE)) install.packages("DBI")
@@ -29,7 +29,6 @@ users_regression <- dbGetQuery(con, "
     pref_Travel
     pref_Education
     pref_Pets
-    
   FROM users
   WHERE
     base_videos_watched_mean IS NOT NULL
@@ -61,4 +60,18 @@ model_multiple <- lm(
 )
 
 summary(model_multiple)
+
+# Plot 1: Simple regression
+
+plot1 <- ggplot(users_regression, aes(x = pref_Gaming, y = base_videos_watched_mean)) +
+  geom_point(alpha = 0.4, color = "pink") +
+  geom_smoot(method = "lm", se = TRUE, color = "darkred")+
+  labs(
+    title = "Gaming preference and average videos watched",
+    subtitle = "Simple linear regression",
+    x = "Preference for gaming content",
+    y = "Average number of videos watched"
+  )
+
+plot1
 
