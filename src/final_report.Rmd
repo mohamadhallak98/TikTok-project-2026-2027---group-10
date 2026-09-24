@@ -1,3 +1,9 @@
+---
+title: "Final report"
+author: "Iris, Jette"
+output: html_document
+---
+
 # Final knitted report 
 This document brings everything together into one final, knitted report: the basic data inspection, the analyses/summaries, the regression analysis, and your conclusions, combined into a single PDF.
 
@@ -19,6 +25,25 @@ library(glue)      # Tutorial technique: String interpolation
 library(scales)    # Axis and text number formatting (e.g., comma labels)
 library(purrr)     # Tutorial technique: Functional programming and loops (iwalk)
 
+# Since data is already downloaded by makefile 
+impresions <- read_csv("../data/raw/impressions.csv")
+sessions<- read_csv("../data/raw/sessions.csv)
+users<- read_csv("../data/raw/users.csv)
+watch_events<- read_csv("../data/raw/watch_events.csv)
+
+# Inspect 
+
+datasets <- list(
+  impressions = impressions,
+  sessions = sessions,
+  users = users,
+  watch_events = watchevents
+)
+
+lapply(datasets, head)
+lapply(datasets, names)
+lapply(datasets, str)
+lapply(datasets, summary)
 
 ```
 
