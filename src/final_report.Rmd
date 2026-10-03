@@ -1,7 +1,8 @@
 ---
 title: "Final report"
 author: "Iris, Jette"
-output: html_document
+output:  pdf_document:
+    keep_tex: true
 ---
 
 # Final knitted report 
@@ -26,10 +27,10 @@ library(scales)    # Axis and text number formatting (e.g., comma labels)
 library(purrr)     # Tutorial technique: Functional programming and loops (iwalk)
 
 # Since data is already downloaded by makefile 
-impresions <- read_csv("../data/raw/impressions.csv")
-sessions<- read_csv("../data/raw/sessions.csv)
-users<- read_csv("../data/raw/users.csv)
-watch_events<- read_csv("../data/raw/watch_events.csv)
+impressions <- read_csv(here("data", "raw", "impressions.csv"))
+sessions <- read_csv(here("data", "raw", "sessions.csv"))
+users <- read_csv(here("data", "raw", "users.csv"))
+watch_events <- read_csv(here("data", "raw", "watch_events.csv"))
 
 # Inspect 
 
@@ -37,7 +38,7 @@ datasets <- list(
   impressions = impressions,
   sessions = sessions,
   users = users,
-  watch_events = watchevents
+  watch_events = watch_events
 )
 
 lapply(datasets, head)
@@ -45,7 +46,125 @@ lapply(datasets, names)
 lapply(datasets, str)
 lapply(datasets, summary)
 
+# Cleaning of users
+users_clean <- na.omit(users)
+
+# Cleaning of watch_events
+# Delete of raw data making clean file
+watch_events_clean <- watch_events %>% select(-started_at_raw)
+
+# Fixing started at and ended at
+
+library(dplyr)
+
+watch_events_clean <- watch_events_clean %>%
+  mutate(
+    started_at = as.POSIXct(started_at, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"),
+    ended_at   = as.POSIXct(ended_at,   format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+  )
+# Fixing missing data
+watch_events_clean<- watch_events_clean %>% mutate(watch_seconds_calc = as.integer(as.numeric(difftime(ended_at, started_at, units = "secs"))))
+
+watch_events_clean <- watch_events_clean %>% select(-watch_seconds) %>% rename(watch_seconds = watch_seconds_calc)
+
+# Remove duplicate 'impression_id' (identical to 'watch_event_id'), as shown in row 50 onwards
+watch_events_clean <- watch_events_clean %>%
+  select(-impression_id)
+
+# Cleaning of sessions
+sessions_clean <- sessions %>%
+  drop_na() %>%
+  mutate(
+    session_date = as.Date(login_at),
+    watch_efficiency = ifelse(session_duration_sec > 0, (watch_seconds / session_duration_sec) * 100, 0)
+  )
+
+# Cleaning of impressions
+# 1) Recoding the source labels to make more sense with the assignment
+# Recode source labels to match project terminology
+impressions_clean <- impressions_raw %>%
+  mutate(
+    source_bucket = recode(
+      source_bucket,
+      known = "followed",
+      preferred_new = "recommended",
+      explore = "explore"
+    ),
+    source_bucket = factor(source_bucket, levels = c("followed", "recommended", "explore"))
+  ) %>%
+  distinct(impression_id, .keep_all = TRUE)
+
+# 2) Remove duplicated impressions
+impressions_clean %>%
+  count(impression_id) %>%
+  filter(n > 1) %>%
+  arrange(desc(n))
+
+impressions_clean <- impressions_clean %>%
+  distinct(impression_id, .keep_all = TRUE)
+
+# 3) Standardize creator names for each creator_id
+impressions_clean %>%
+  distinct(creator_id, creator_display_name) %>%
+  arrange(creator_id, creator_display_name) %>%
+  filter(creator_id %in% (
+    impressions_clean %>%
+      distinct(creator_id, creator_display_name) %>%
+      count(creator_id) %>%
+      filter(n > 1) %>%
+      pull(creator_id)
+  ))
+
+creator_name_map <- impressions_clean %>%
+  mutate(
+    creator_display_name_clean = creator_display_name %>%
+      str_replace_all("-", " ") %>%
+      str_remove_all("^(The\\s+)|(\\s+Official)$|(\\s+\\d+)$") %>%
+      str_squish()
+  ) %>%
+  count(creator_id, creator_display_name_clean, sort = TRUE) %>%
+  arrange(creator_id, desc(n), creator_display_name_clean) %>%
+  group_by(creator_id) %>%
+  slice(1) %>%
+  ungroup() %>%
+  select(creator_id, creator_display_name = creator_display_name_clean)
+
+# Merge standardized creator names back into main dataset with a clear variable name
+impressions_standardized <- impressions_clean %>%
+  select(-creator_display_name) %>%
+  left_join(creator_name_map, by = "creator_id")
+
+## Creating of plots 
+
+#Create an isolated output directory to avoid overwriting teammate artifacts
+output_dir <- here("gen", "output", "impressions_analysis")
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
+# Created plots
+
+folders <- c(
+  "gen/output/impressions_analysis",
+  "gen/output/session_analysis",
+  "gen/output/users_analysis",
+  "gen/output/watch_event_analysis"
+)
+images <- unlist(lapply(folders, function(folder) {
+  list.files(folder, pattern = "\\.png$", full.names = TRUE)
+}))
+knitr::include_graphics(images)
+
+# Regression analysis, copy and paste from previous 
+
+# Conclusion of regression 
+
+
+
+
 ```
+
+
 
 ## The analyses
 
