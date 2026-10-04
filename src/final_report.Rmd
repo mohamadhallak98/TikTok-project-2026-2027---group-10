@@ -169,7 +169,7 @@ knitr::include_graphics(images)
 
 ## Regression analysis
 
-This section examines whether users' content preferences are associated with the average number of videos they watch. First, we estimate a simple linear regression with gaming preference as the predictor. Then, we estimate a multiple linear regression including several content preferences.
+This section examines whether users' content preferences are associated with the average number of videos they watch. First, we estimate a simple linear regression with gaming preference as the predictor. Then, we estimate a multiple linear regression including all of the content preference variables.
 
 ```{r loading_packages}
 
