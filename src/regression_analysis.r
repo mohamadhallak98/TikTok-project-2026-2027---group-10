@@ -3,16 +3,17 @@
 if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
 if (!requireNamespace("DBI", quietly = TRUE)) install.packages("DBI")
 if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 
 library(RSQLite)
 library(DBI)
 library(tidyverse)
+library(here)
 
 # Create a connection to the SQLite database
 
 con <-dbConnect(SQLite(),dbname= "tiktok_students.sqlite")
 result <-dbGetQuery(con,"SELECT * FROM users") %>% tibble()
-dbDisconnect(con)
 
 # Get users data with SQL query
 
@@ -23,11 +24,11 @@ users_regression <- dbGetQuery(con, "
     pref_Dance,
     pref_BeautyFashion,
     pref_Food,
-    pref_FitnessSports
-    pref_Gaming
-    pref_DIYHome
-    pref_Travel
-    pref_Education
+    pref_FitnessSports,
+    pref_Gaming,
+    pref_DIYHome,
+    pref_Travel,
+    pref_Education,
     pref_Pets
   FROM users
   WHERE
@@ -41,7 +42,11 @@ users_regression <- dbGetQuery(con, "
     AND pref_DIYHome IS NOT NULL
     AND pref_Travel IS NOT NULL
     AND pref_Education IS NOT NULL
-") %>%
+    AND pref_Pets IS NOT NULL
+")%>%
+  as_tibble()
+
+dbDisconnect(con)
 
 # Isolated target output folder
   output_dir <- here("gen", "output", "regression_analysis")
@@ -90,4 +95,37 @@ ggsave(
 
 # Plot 2: Multiple regression
 
+coef_df <- tibble(
+  term = names(coef(model_multiple)),
+  estimate = coef(model_multiple),
+  conf.low = confint(model_multiple)[, 1],
+  conf.high = confint(model_multiple)[, 2],
+  p.value = summary(model_multiple)$coefficients[, 4]
+) %>%
+  filter(term != "(Intercept)")
 
+plot2 <- ggplot(coef_df, aes(x = estimate, y = term)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_errorbar(
+    aes(xmin = conf.low, xmax = conf.high),
+    width = 0.2,
+    orientation = "y",
+    color = "darkred"
+  ) +
+  geom_point(size = 3, color = "pink") +
+  labs(
+    title = "Content preferences and average videos watched",
+    subtitle = "Multiple linear regression coefficients with 95% confidence intervals",
+    x = "Estimated effect on average videos watched",
+    y = "Content preference"
+  ) +
+  theme_minimal()
+
+plot2
+
+ggsave(
+  filename = file.path(output_dir, "multiple_regression_coefficients.png"),
+  plot = plot2,
+  width = 7,
+  height = 4.5
+)
