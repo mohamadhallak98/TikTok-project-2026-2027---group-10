@@ -43,7 +43,13 @@ users_regression <- dbGetQuery(con, "
     AND pref_Education IS NOT NULL
 ") %>%
 
-# Simple regression: Do people with a higher preference for gaming watch more videos on average?
+# Isolated target output folder
+  output_dir <- here("gen", "output", "regression_analysis")
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
+# Simple regression: Is preference for gaming associated with the amount of videos a users watches on average?
 
 model_simple <- lm(
   base_videos_watched_mean ~ pref_Gaming,
@@ -65,7 +71,7 @@ summary(model_multiple)
 
 plot1 <- ggplot(users_regression, aes(x = pref_Gaming, y = base_videos_watched_mean)) +
   geom_point(alpha = 0.4, color = "pink") +
-  geom_smoot(method = "lm", se = TRUE, color = "darkred")+
+  geom_smooth(method = "lm", se = TRUE, color = "darkred")+
   labs(
     title = "Gaming preference and average videos watched",
     subtitle = "Simple linear regression",
@@ -74,4 +80,14 @@ plot1 <- ggplot(users_regression, aes(x = pref_Gaming, y = base_videos_watched_m
   )
 
 plot1
+
+ggsave(
+  filename = file.path(output_dir, "simple_regression.png"),
+  plot = plot1,
+  width = 7,
+  height = 4.5
+)
+
+# Plot 2: Multiple regression
+
 
