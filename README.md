@@ -11,17 +11,32 @@ TikTok-project-2026-2027---group-10/
 ├── data/
 │   ├── raw/                  # Downloaded raw dataset (ignored by Git, managed via script)
 │   │   ├── .gitkeep          # Tracks directory structure on GitHub
-│   │   └── video_view.csv    # Automatically fetched raw TikTok dataset
 │   └── processed/            # Storage location for clean dataset outputs
 │       └── .gitkeep
 ├── docs/                     # Project documentation placeholder
 │   └── .gitkeep
+├── gen
+│   └── output
+│   │   ├── impressions_analysis
+│   │   │   ├──
+│   │   ├── watch_event_analysis
+│   │   ├── session_analysis
+│   │   ├── users_analysis
+│   │   ├── final_report.pdf
 ├── src/                      # Source code (Quarto execution scripts)
-│   ├── File_download.qmd     # Automated pipeline: setup, directory check & file fetch
-│   └── summary.qmd           # Exploratory summary report and metrics calculation
+│   ├── TikTokdata_10
+│   │   │   ├── 
+│   └── impressions_analysis
+│   └── sessions_analysis
+│   └── users_analysis
 ├── .gitignore                # Restricts large/raw data files while tracking folder structure
 ├── AI.md                     # Comprehensive AI usage & transparency log
-└── README.md                 # Project onboard, execution, and architectural guide
+├── README.md                 # Project onboard, execution, and architectural guide
+├── final_report.Rmd
+├── query_sql.R
+├── regression_analysis.r
+├── sqlite_download.R
+├── Makefile
 ```
 
 ## Environment setup & dependencies
@@ -35,7 +50,7 @@ To run this project locally, ensure you have the following installed:
 ## Required R Packages
 Install the necessary package dependencies by executing this in your R Console:
 ```r
-install.packages(c("tidyverse", "dplyr"))
+install.packages(c("tidyverse", "dplyr", "here", "ggplot2", "RSQLite", "DBI"))
 ```
 
 ## Reproducing the analysis:
