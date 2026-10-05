@@ -1,7 +1,7 @@
 # TikTok data analysis project (group 10)
 
 ## Project goal
-This project analyzes TikTok video engagement metrics to evaluate creator performance and viewer reach trends using R and Quarto.
+This project analyzes and visualizes TikTok video engagement metrics to evaluate creator performance and viewer reach trends using R and Quarto.
 
 
 ## Project Structure
@@ -18,25 +18,35 @@ TikTok-project-2026-2027---group-10/
 ├── gen
 │   └── output
 │   │   ├── impressions_analysis
-│   │   │   ├──
 │   │   ├── watch_event_analysis
 │   │   ├── session_analysis
 │   │   ├── users_analysis
 │   │   ├── final_report.pdf
 ├── src/                      # Source code (Quarto execution scripts)
 │   ├── TikTokdata_10
-│   │   │   ├── 
+│   │   ├── Analysis_files
+│   │   ├── Analysis.qmd
+│   │   ├── README.md
 │   └── impressions_analysis
+│   │   ├── README.md
+│   │   ├── data_analysis.R
+│   │   ├── download_data.R
 │   └── sessions_analysis
+│   │   ├── 01_download_data.R
+│   │   ├── 02_analyze_sessions.R
+│   │   ├──README.md
 │   └── users_analysis
+│   │   ├── data_analysis_files/libs
+│   │   ├── README.md
+│   │   ├── data_analysis.qmd
+│   └── final_report.Rmd
+│   └── query_sql.R
+│   └── regression_analysis.r
+│   └── sqlite_download.R
 ├── .gitignore                # Restricts large/raw data files while tracking folder structure
 ├── AI.md                     # Comprehensive AI usage & transparency log
-├── README.md                 # Project onboard, execution, and architectural guide
-├── final_report.Rmd
-├── query_sql.R
-├── regression_analysis.r
-├── sqlite_download.R
 ├── Makefile
+├── README.md                 # Project onboard, execution, and architectural guide
 ```
 
 ## Environment setup & dependencies
@@ -94,10 +104,10 @@ Both pipeline scripts follow strict SITO principles:
 
 ## Group members + contribution
 The issues were assigned to the different team members on GitHub.
-* Mohamad Al Hallak: Code validation, issues management, cross-platform path debugging (Windows), and resolving git workflow conflicts.
-* Danny Verkade: Resolving R package warnings/errors, analyzing alternative code implementations, and broad concept exploration.
-* Iris de Bruijn: Command syntax lookup, script structure understanding, and error resolution.
-* Jette Hulsen: Concept clarification, understanding script logic, and troubleshooting script issues.
+* Mohamad Al Hallak: Code validation, issues management, cross-platform path debugging (Windows), plotting data, making of final document, checking groupmembers, making of make file and resolving git workflow conflicts.
+* Danny Verkade: Resolving R package warnings/errors, analyzing alternative code implementations,  plotting data, making of final document, checking groupmembers, making of make file and broad concept exploration.
+* Iris de Bruijn: Command syntax lookup, script structure understanding, cleaning data, checking of groupmembers work, plotting data, applying of lineair regression, making of final document and error resolution.
+* Jette Hulsen: Concept clarification, understanding script logic, cleaning data, checking of groupmembers work, plotting data, applying of lineair regression, making of final document and troubleshooting script issues.
 
 ## AI tools: 
 AI tools were utilized for code validation, Windows-specific path debugging, and conceptual learning. Full model listings, workflows, and human review protocols are documented in [AI.md](./AI.md).
