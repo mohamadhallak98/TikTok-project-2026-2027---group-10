@@ -1,29 +1,182 @@
-# Final knitted report 
-This document brings everything together into one final, knitted report: the basic data inspection, the analyses/summaries, the regression analysis, and your conclusions, combined into a single PDF.
+---
+title: "TikTok student engagement & content preferences: Final integrated report"
+subtitle: "Data Preparation and Programming Skills — Group 10"
+author: "Group 10"
+date: "`r Sys.Date()`"
+documentclass: article
+secnumdepth: 1
+output:
+  pdf_document:
+    toc: true
+    number_sections: true
+--- 
+## Setting up
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = "center"
+)
 
-## Basic data inspection
+library(here)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+library(readr)
 
-```{r}
-# Check for required packages, and install if missing
-required_packages <- c("tidyverse", "here", "glue", "scales", "purrr")
-missing_packages <- required_packages[!vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)]
-
-if (length(missing_packages) > 0) {
-  install.packages(missing_packages)
+# Bulletproof helper function to locate PNG image files only
+find_plot <- function(folder, name_pattern) {
+  base_dir <- here("gen", "output", folder)
+  if (!dir.exists(base_dir)) return(NULL)
+  
+  # Search recursively for .png files matching pattern
+  all_pngs <- list.files(base_dir, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
+  matching_files <- grep(name_pattern, all_pngs, value = TRUE)
+  
+  # Return only actual existing files
+  valid_files <- matching_files[file_test("-f", matching_files)]
+  
+  if (length(valid_files) > 0) return(valid_files[1])
+  return(NULL)
 }
-
-# Explicitly load all required packages, including newly introduced packages
-library(tidyverse) # Includes ggplot2, dplyr, readr, stringr
-library(here)      # Safe relative path resolution
-library(glue)      # Tutorial technique: String interpolation
-library(scales)    # Axis and text number formatting (e.g., comma labels)
-library(purrr)     # Tutorial technique: Functional programming and loops (iwalk)
-
-
 ```
 
-## The analyses
+## Introduction & data inspection:
+This report consolidates data inspection, exploratory module analyses, and regression modeling of TikTok student user behavior. The underlying data architecture links user profiles with event tracking, capturing detailed interactions across distinct platform touchpoints. By inspecting entity counts and structural primary keys across user attributes, session logs, feed impressions, and watch duration events, this phase verifies relational integrity prior to downstream statistical modeling.
 
-## Regression analysis
+```{r}
+# Load datasets 
+users_path <- here("data", "raw", "users.csv")
+sessions_path <- here("data", "raw", "sessions.csv")
+impressions_path <- here("data", "raw", "impressions.csv")
 
-## Conclusion
+n_users <- if (file.exists(users_path)) nrow(read_csv(users_path, show_col_types = FALSE)) else NA
+n_sessions <- if (file.exists(sessions_path)) nrow(read_csv(sessions_path, show_col_types = FALSE)) else NA
+n_impressions <- if (file.exists(impressions_path)) nrow(read_csv(impressions_path, show_col_types = FALSE)) else NA
+
+inspection_df <- tibble(
+  Dataset = c("Users profiles", "User sessions", "Feed impressions"),
+  `Record count` = c(n_users, n_sessions, n_impressions),
+  `Primary key` = c("user_id", "session_id", "impression_id")
+)
+
+kable(inspection_df, caption = "Summary of inspected data entities")
+```
+
+## Feed impression analysis: 
+Feed impressions record user content discovery across algorithmically recommendation feeds, followed accounts, and general search channels. Analyzing impression volume across these distinct entry points reveals how algorithmic content delivery drives overall student reach on the platform. The majority of content exposures originate from the recommendation engine, underscoring the dominant role of automated content matching in user discovery.
+
+```{r}
+img_imp <- here("gen", "output", "impressions_analysis", "impressions_by_source.png")
+if (file.exists(img_imp)) {
+  knitr::include_graphics(img_imp)
+} else {
+  cat("Figure not found: gen/output/impressions_analysis/impressions_by_source.png")
+}
+```
+
+## Session analysis: 
+Session dynamics track the duration and frequency of individual user visits to quantify platform engagement patterns. Raw session lengths show extreme right-skewness, as most user visits are short micro-sessions recognized by occasional browsing sessions. Applying a log-10 transformation normalizes the session duration distribution, enabling clear comparative evaluation of engagement consistency across student users.
+
+```{r}
+img_sess <- here("gen", "output", "session_analysis", "session_duration_distribution.png")
+if (!file.exists(img_sess)) {
+  # Fallback to search matching pattern if date-stamped file name was used
+  sess_files <- list.files(here("gen", "output", "session_analysis"), pattern = "session_duration_distribution", full.names = TRUE)
+  if (length(sess_files) > 0) img_sess <- sess_files[1]
+}
+
+if (file.exists(img_sess)) {
+  knitr::include_graphics(img_sess)
+} else {
+  cat("Figure not found: gen/output/session_analysis/session_duration_distribution.png")
+}
+```
+
+## Watch event analysis:
+Watch events capture watch duration metrics associated with discrete user actions, such as liking, commenting, or sharing videos. Examining average watch seconds across these interaction types illustrates the relationship between active engagement and passive viewing time. Content that triggers explicit user actions generally corresponds to significantly higher watch durations, highlighting active participation as a strong indicator of content retention.
+
+```{r}
+img_watch <- here("gen", "output", "watch_event_analysis", "average_watch_time.png")
+if (!file.exists(img_watch)) {
+  watch_files <- list.files(here("gen", "output", "watch_event_analysis"), pattern = "average_watch_time", full.names = TRUE)
+  if (length(watch_files) > 0) img_watch <- watch_files[1]
+}
+
+if (file.exists(img_watch)) {
+  knitr::include_graphics(img_watch)
+} else {
+  cat("Figure not found: gen/output/watch_event_analysis/average_watch_time.png")
+}
+```
+
+## User behaviour distribution: 
+User profile analysis evaluates baseline video consumption variance across individual student accounts. Distributional analysis of average videos watched per user highlights significant differences in total user consumption levels. Identifying these underlying distribution profiles provides critical context for controlling baseline usage when testing content preference effects.
+
+```{r}
+img_users <- here("gen", "output", "users_analysis", "average_videos_watched_distribution.png")
+if (!file.exists(img_users)) {
+  user_files <- list.files(here("gen", "output", "users_analysis"), pattern = "average_videos_watched", full.names = TRUE)
+  if (length(user_files) > 0) img_users <- user_files[1]
+}
+
+if (file.exists(img_users)) {
+  knitr::include_graphics(img_users)
+} else {
+  cat("Figure not found: gen/output/users_analysis/average_videos_watched_distribution.png")
+}
+```
+
+## Regression analysis: content preferences vs. consumption:
+To isolate the key behavioral drivers of platform usage, linear regression models evaluate the impact of topic preferences on average video consumption. Subjective preference scores across ten primary content genres are modeled against total average videos watched per user (base_videos_watched_mean). This statistical modeling approach determines whether specific genre inclinations systematically boost overall engagement duration.
+
+```{r}
+users_raw <- read_csv(here("data", "raw", "users.csv"), show_col_types = FALSE)
+
+users_reg <- users_raw %>%
+  select(
+    base_videos_watched_mean,
+    pref_Comedy, pref_Dance, pref_BeautyFashion, pref_Food,
+    pref_FitnessSports, pref_Gaming, pref_DIYHome, pref_Travel,
+    pref_Education, pref_Pets
+  ) %>%
+  drop_na()
+
+model_simple <- lm(base_videos_watched_mean ~ pref_Gaming, data = users_reg)
+model_multiple <- lm(base_videos_watched_mean ~ ., data = users_reg)
+```
+
+## Simple linear regression (Gaming preference):
+The simple linear regression isolates gaming preference as a standalone predictor of video consumption volume. The bivariate model estimates the baseline increase in average videos watched for every unit increase in reported gaming interest. Results demonstrate a statistically significant positive relationship, indicating that high gaming interest directly correlates with higher platform usage.
+
+```{r}
+img_reg1 <- here("gen", "output", "regression_analysis", "simple_regression.png")
+if (file.exists(img_reg1)) {
+  knitr::include_graphics(img_reg1)
+}
+```
+
+## Multiple linear regression coefficients: 
+The multiple linear regression incorporates all ten content categories simultaneously to control for confounding preference overlaps. By estimating partial regression coefficients with 95% confidence intervals, the model isolates the unique net contribution of each genre to total video consumption. While categories like gaming, comedy, and education maintain strong positive effects, other genres exhibit neutral or marginal associations when evaluated concurrently.
+
+```{r}
+img_reg2 <- here("gen", "output", "regression_analysis", "multiple_regression_coefficients.png")
+if (file.exists(img_reg2)) {
+  knitr::include_graphics(img_reg2)
+}
+```
+
+## Conclusions & limitations: 
+- Algorithmic reach & engagement: The platform recommendation engine represents the overwhelming majority of impression volume, driving sustained user viewing sessions across student demographics.
+- Preference effects on consumption: Content preference scores—most notably in gaming, comedy, and educational content—demonstrate strong positive associations with overall video watch counts.
+- Behavioral indicators: High-engagement user actions, such as sharing or commenting, strongly correlate with longer watch times per session compared to passive feed scrolling.
+
+## Methodological limitations: 
+- Association vs. causation: Regression results demonstrate statistical correlation rather than direct causal behavior. Unobserved demographic or temporal variables may influence consumption.
+- Self-reported preferences: Stated preference metrics may reflect past platform exposure or algorithmic feedback loops rather than intrinsic baseline user preferences.
+- Sample generalizability: The user cohort is drawn from a specific student demographic, which may limit direct application to general non-student platform populations.
+
+## Technical note: Execution via R console vs. Terminal:
+When executing report generation in restricted computing environments, system security policies (such as Windows AppLocker or PowerShell execution restrictions) may block external terminal CLI processes from loading dynamic libraries (.dll). Additionally, terminal command parsing can fail due to escape-character quoting mismatches across operating systems. Executing rmarkdown::render() directly inside an interactive R Console bypasses operating system security blocks because commands run within an already authorized session, guaranteeing consistent compilation across all platforms.

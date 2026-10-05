@@ -56,7 +56,8 @@ colSums(is.na(users_clean))
 
 ```{r}
 # Create plot
-histogram_users<- ggplot(users_clean, aes(x = base_videos_watched_mean)) +
+# Create plot
+histogram_users <- ggplot(users_clean, aes(x = base_videos_watched_mean)) +
   geom_histogram(
     aes(fill = after_stat(count)),
     bins = 30,
@@ -82,23 +83,22 @@ histogram_users<- ggplot(users_clean, aes(x = base_videos_watched_mean)) +
     legend.position = "right"
   )
 
-plot_filename<- glue("average_videos_watched_distribution_{Sys.Date()}.png")
+# Output directory directly under gen/output/users_analysis
+output_dir <- here("gen", "output", "users_analysis")
 
-## Create output directory (relative to project root)
-output_dir <- "../../gen/output/users_analysis/average_videos_watched_distribution"  
-
-# Navigates up from src/TikTokdata_10/
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
+
+# Standardized filename without date stamps or extra subfolders
 ggsave(
-  filename=file.path(output_dir, plot_filename), plot= histogram_users,
+  filename = file.path(output_dir, "average_videos_watched_distribution.png"),
+  plot = histogram_users,
   width = 8,
   height = 5,
   dpi = 300,
   bg = "white"
 )
-
 
 
 ```
