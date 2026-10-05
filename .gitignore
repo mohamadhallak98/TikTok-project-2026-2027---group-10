@@ -10,3 +10,8 @@ Rplots.pdf
 .Rproj.user
 .Rhistory
 .RData
+
+# Ignore image, css and html files
+*.png
+*.css
+*.html
