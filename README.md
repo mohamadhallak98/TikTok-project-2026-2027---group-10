@@ -15,7 +15,7 @@ TikTok-project-2026-2027---group-10/
 │       └── .gitkeep
 ├── docs/                     # Project documentation placeholder
 │   └── .gitkeep
-├── gen
+├── gen                       # Generated files
 │   └── output
 │   │   ├── impressions_analysis
 │   │   ├── watch_event_analysis
@@ -45,7 +45,7 @@ TikTok-project-2026-2027---group-10/
 │   └── sqlite_download.R
 ├── .gitignore                # Restricts large/raw data files while tracking folder structure
 ├── AI.md                     # Comprehensive AI usage & transparency log
-├── Makefile
+├── Makefile                  # Automation
 ├── README.md                 # Project onboard, execution, and architectural guide
 ```
 
@@ -60,7 +60,7 @@ To run this project locally, ensure you have the following installed:
 ## Required R Packages
 Install the necessary package dependencies by executing this in your R Console:
 ```r
-install.packages(c("tidyverse", "dplyr", "here", "ggplot2", "RSQLite", "DBI"))
+install.packages(c("here", "dplyr", "tidyr", "ggplot2", "knitr", "readr"))
 ```
 
 ## Reproducing the analysis:
@@ -74,33 +74,94 @@ All scripts are written with dynamic relative pathing (basename(getwd())). They 
 ```bash
 cd TikTok-project-2026-2027---group-10
 ```
-* Execute the workflow scripts inside src/ in the following order:
-    - Step 1 (data acquisition): Render or run `src/File_download.qmd` to fetch the raw TikTok dataset.
+* Execute the workflow scripts inside `src/` in the following order:
 
-     ```bash
-     quarto render src/File_download.qmd
-     ```
-     
-   - Step 2 (data analysis & reporting): Execute `src/summary.qmd` or render via terminal to process the data and generate the output summary report.
+  - Step 1 (data acquisition): Run `src/sqlite_download.R` if the SQLite database is not yet available in `data/raw/`.
 
-     ```bash
-     quarto render src/summary.qmd
-     ```
+    ```r
+    source("src/sqlite_download.R")
+    ```
+    This downloads the raw SQLite database to:
+    
+    ```text
+    data/raw/tiktok_students.sqlite
+    ```
 
-     - Input: `data/raw/video_view.csv`.
-     - Output: Generates `src/summary.html` containing:
-       - Missing value diagnostics (`colSums(is.na())`).
-       - Aggregate summary metrics (total creators, average impressions, watch rate, watch share).
-       - Video performance ranking.
-       - Video length distribution histograms.
-* Commit and push with Git: In your Positron terminal, execute the commands you need for adding, committing and pushing.
+  - Step 2 (database inspection): Run `src/query_sql.R` to inspect the available tables and preview the database contents.
 
-## Pipeline architecture (setup-input-transformation-output)
-Both pipeline scripts follow strict SITO principles:
-* Setup: Dynamic environment path detection (src/ vs. project root) and package initialization (tidyverse, dplyr).
-* Input: Safe data retrieval via HTTP (mode = "wb" for Windows compatibility) or importing from data/raw/.
-* Transformation: Data cleaning, conditional subsetting (watch_rate > 0.8), variable additions (watched_pct), and NA-safe statistical aggregation (na.rm = TRUE).
-* Output: Clean console/Quarto report generation and local raw file retention.
+    ```r
+    source("src/query_sql.R")
+    ```
+
+    This script connects to the SQLite database, lists the available tables/views, prints column names, and shows the first rows. It does not create CSV files.
+
+  - Step 3 (data analysis): Run the individual analysis scripts to generate the required plots.
+
+    ```r
+    source("src/impressions_analysis/data_analysis.R")
+    source("src/sessions_analysis/02_analyze_sessions.R")
+    source("src/regression_analysis.r")
+    ```
+
+    Depending on the local file structure, also run the users and watch event analysis scripts if needed.
+
+    The analysis scripts use input files from:
+
+    ```text
+    data/raw/
+    ```
+
+    Main expected input files include:
+
+    ```text
+    users.csv
+    sessions.csv
+    impressions.csv
+    ```
+
+    The generated figures are saved in:
+
+    ```text
+    gen/output/
+    ```
+
+  - Step 4 (final report): Render the integrated final report.
+
+    ```r
+    rmarkdown::render("src/final_report.Rmd")
+    ```
+
+    This generates the final PDF report, including:
+    - data inspection of users, sessions, and impressions;
+    - feed impression analysis;
+    - session duration analysis;
+    - watch event analysis;
+    - user behaviour distribution;
+    - simple and multiple linear regression analysis;
+    - conclusions and methodological limitations.
+
+    Output:
+
+    ```text
+    gen/output/final_report.pdf
+    ```
+
+    If rendering from the terminal causes issues because of Windows security or PowerShell restrictions, run the `rmarkdown::render()` command directly inside the R Console in RStudio or Positron.
+
+* Commit and push with Git: In your Positron terminal, execute the commands needed for adding, committing, and pushing your changes.
+
+#
+# Pipeline architecture (setup-input-transformation-output)
+
+The project follows the SITO principle across the download, inspection, analysis, and reporting scripts.
+* **Setup:**  
+  The scripts load the required R packages such as `here`, `dplyr`, `tidyr`, `ggplot2`, `readr`, `DBI`, `RSQLite`, `knitr`, and `rmarkdown`. The `here` package is used to make file paths work consistently from the project root.
+* **Input:**  
+  The raw SQLite database can be downloaded with `src/sqlite_download.R` and stored in `data/raw/tiktok_students.sqlite`. The final report mainly reads prepared CSV files from `data/raw/`, including `users.csv`, `sessions.csv`, and `impressions.csv`.
+* **Transformation:**  
+  The analysis scripts inspect the data structure, summarize feed impressions, analyze session duration distributions, compare watch time across user actions, evaluate user-level video consumption, and prepare variables for regression analysis. Missing values are handled with `drop_na()` where needed before modeling.
+* **Output:**  
+  The separate analysis scripts generate plots in `gen/output/`, including impression source plots, session duration distributions, average watch time plots, user behavior distributions, and regression coefficient visualizations. The final integrated report is rendered from `src/final_report.Rmd` and saved as a PDF report.
 
 ## Group members + contribution
 The issues were assigned to the different team members on GitHub.
